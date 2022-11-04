@@ -20,7 +20,7 @@ class LaravelRepositoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $path = __DIR__ . '/../../config/laravel-repository.php';
+        $path = __DIR__ . '/../../resources/config/laravel-repository.php';
 
         $this->publishes([
             $path => $this->app->configPath('laravel-repository.php'),
