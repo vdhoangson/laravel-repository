@@ -20,8 +20,6 @@ interface BaseInterface
      * Model entity class that will be use in repository.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function entity(): string;
 
@@ -32,8 +30,6 @@ interface BaseInterface
      * @throws BindingResolutionException
      *
      * @return BaseInterface
-     *
-     *
      */
     public function makeEntity(): self;
 
@@ -41,8 +37,6 @@ interface BaseInterface
      * Get entity instance.
      *
      * @return Model|Builder
-     *
-     *
      */
     public function getEntity();
 
@@ -52,8 +46,6 @@ interface BaseInterface
      * @param Model|Builder $entity
      *
      * @return BaseInterface
-     *
-     *
      */
     public function setEntity($entity): self;
 
@@ -63,8 +55,6 @@ interface BaseInterface
      * @param BaseCriteriaInterface $criteria
      *
      * @return BaseInterface
-     *
-     *
      */
     public function pushCriteria(BaseCriteriaInterface $criteria): self;
 
@@ -77,8 +67,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return BaseInterface
-     *
-     *
      */
     public function popCriteria(string $criteriaNamespace): self;
 
@@ -86,8 +74,6 @@ interface BaseInterface
      * Get criteria.
      *
      * @return Collection
-     *
-     *
      */
     public function getCriteria(): Collection;
 
@@ -95,8 +81,6 @@ interface BaseInterface
      * Apply criteria to eloquent query.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function applyCriteria(): self;
 
@@ -106,8 +90,6 @@ interface BaseInterface
      * @param bool $skip
      *
      * @return BaseInterface
-     *
-     *
      */
     public function skipCriteria(bool $skip): self;
 
@@ -118,8 +100,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return BaseInterface
-     *
-     *
      */
     public function clearCriteria(): self;
 
@@ -133,8 +113,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function all(array $columns = ['*']): Collection;
 
@@ -147,8 +125,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function get(array $columns = ['*']): Collection;
 
@@ -161,8 +137,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Model|null
-     *
-     *
      */
     public function first(array $columns = ['*']);
 
@@ -174,9 +148,7 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
-     *
-     *
+     * @return Builder|Model
      */
     public function create(array $parameters = []);
 
@@ -189,9 +161,7 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
-     *
-     *
+     * @return Builder|Model
      */
     public function updateOrCreate(array $where = [], array $values = []);
 
@@ -204,9 +174,7 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
-     *
-     *
+     * @return Builder|Model
      */
     public function update(int $id, array $parameters = []);
 
@@ -218,8 +186,6 @@ interface BaseInterface
      * @throws Exception
      *
      * @return BaseInterface
-     *
-     *
      */
     public function delete(int $id): self;
 
@@ -231,9 +197,7 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
-     *
-     *
+     * @return Builder|Model
      */
     public function firstOrNew(array $where);
 
@@ -243,11 +207,9 @@ interface BaseInterface
      * @param string $column
      * @param string $direction
      *
-     * @return mixed
-     *
-     *
+     * @return BaseInterface
      */
-    public function orderBy(string $column, string $direction = 'asc');
+    public function orderBy(string $column, string $direction = 'asc'): self;
 
     /**
      * Relation sub-query.
@@ -255,8 +217,6 @@ interface BaseInterface
      * @param array $relations
      *
      * @return BaseInterface
-     *
-     *
      */
     public function with($relations): self;
 
@@ -264,8 +224,6 @@ interface BaseInterface
      * Begin database transaction.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function transactionBegin(): self;
 
@@ -273,8 +231,6 @@ interface BaseInterface
      * Commit database transaction.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function transactionCommit(): self;
 
@@ -282,8 +238,6 @@ interface BaseInterface
      * Rollback transaction.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function transactionRollback(): self;
 
@@ -297,8 +251,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function findWhere(array $where, array $columns = ['*']): Collection;
 
@@ -313,8 +265,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection;
 
@@ -329,8 +279,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection;
 
@@ -345,8 +293,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return bool
-     *
-     *
      */
     public function chunk(int $limit, callable $callback, array $columns = ['*']): bool;
 
@@ -359,8 +305,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return int
-     *
-     *
      */
     public function count(array $columns = ['*']): int;
 
@@ -386,8 +330,6 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return mixed
-     *
-     *
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
 
@@ -403,26 +345,20 @@ interface BaseInterface
      * @throws RepositoryEntityException
      *
      * @return mixed
-     *
-     *
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
 
     /**
      * Get records with trashed entities.
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function withTrashed(): self;
 
     /**
      * Get only trashed entities.
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function onlyTrashed(): self;
 
@@ -435,9 +371,7 @@ interface BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): self;
 
@@ -448,9 +382,7 @@ interface BaseInterface
      * @param string $operator
      * @param int    $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orHas($relation, $operator = '>=', $count = 1): self;
 
@@ -461,9 +393,7 @@ interface BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function doesntHave($relation, $boolean = 'and', Closure $callback = null): self;
 
@@ -472,9 +402,7 @@ interface BaseInterface
      *
      * @param $relation
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orDoesntHave($relation): self;
 
@@ -486,9 +414,7 @@ interface BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): self;
 
@@ -500,9 +426,7 @@ interface BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): self;
 
@@ -512,9 +436,7 @@ interface BaseInterface
      * @param string       $relation
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function whereDoesntHave($relation, Closure $callback = null): self;
 
@@ -524,9 +446,7 @@ interface BaseInterface
      * @param string       $relation
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orWhereDoesntHave($relation, Closure $callback = null): self;
 
@@ -540,9 +460,7 @@ interface BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): self;
 
@@ -554,9 +472,7 @@ interface BaseInterface
      * @param string $operator
      * @param int    $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orHasMorph($relation, $types, $operator = '>=', $count = 1): self;
 
@@ -568,9 +484,7 @@ interface BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null): self;
 
@@ -580,9 +494,7 @@ interface BaseInterface
      * @param $relation
      * @param $types
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orDoesntHaveMorph($relation, $types): self;
 
@@ -595,9 +507,7 @@ interface BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): self;
 
@@ -610,9 +520,7 @@ interface BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): self;
 
@@ -623,9 +531,7 @@ interface BaseInterface
      * @param $types
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function whereDoesntHaveMorph($relation, $types, Closure $callback = null): self;
 
@@ -636,9 +542,7 @@ interface BaseInterface
      * @param $types
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null): self;
 
@@ -647,9 +551,7 @@ interface BaseInterface
      *
      * @param string|array $relations
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function withCount($relations): self;
 }

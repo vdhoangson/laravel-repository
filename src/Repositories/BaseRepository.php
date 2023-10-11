@@ -70,8 +70,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      *
      * @return BaseInterface
-     *
-     *
      */
     public function makeEntity(): BaseInterface
     {
@@ -92,8 +90,6 @@ abstract class BaseRepository implements BaseInterface
      * Get entity instance.
      *
      * @return Model|Builder
-     *
-     *
      */
     public function getEntity()
     {
@@ -106,8 +102,6 @@ abstract class BaseRepository implements BaseInterface
      * @param Model|Builder $entity
      *
      * @return BaseInterface
-     *
-     *
      */
     public function setEntity($entity): BaseInterface
     {
@@ -122,8 +116,6 @@ abstract class BaseRepository implements BaseInterface
      * @param BaseCriteriaInterface $criteria
      *
      * @return BaseInterface
-     *
-     *
      */
     public function pushCriteria(BaseCriteriaInterface $criteria): BaseInterface
     {
@@ -141,8 +133,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return BaseInterface
-     *
-     *
      */
     public function popCriteria(string $criteriaNamespace): BaseInterface
     {
@@ -159,8 +149,6 @@ abstract class BaseRepository implements BaseInterface
      * Get criteria.
      *
      * @return Collection
-     *
-     *
      */
     public function getCriteria(): Collection
     {
@@ -171,8 +159,6 @@ abstract class BaseRepository implements BaseInterface
      * Apply criteria to eloquent query.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function applyCriteria(): BaseInterface
     {
@@ -184,8 +170,10 @@ abstract class BaseRepository implements BaseInterface
 
         if ($criteria instanceof Collection) {
             foreach ($criteria as $c) {
-                if ($c instanceof BaseCriteriaInterface
-                    && $c instanceof BaseCriteria) {
+                if (
+                    $c instanceof BaseCriteriaInterface
+                    && $c instanceof BaseCriteria
+                ) {
                     $this->entity = $c->apply($this->getEntity());
                 }
             }
@@ -200,8 +188,6 @@ abstract class BaseRepository implements BaseInterface
      * @param bool $skip
      *
      * @return BaseInterface
-     *
-     *
      */
     public function skipCriteria(bool $skip): BaseInterface
     {
@@ -217,8 +203,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return BaseInterface
-     *
-     *
      */
     public function clearCriteria(): BaseInterface
     {
@@ -238,8 +222,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function all(array $columns = ['*']): Collection
     {
@@ -259,8 +241,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function get(array $columns = ['*']): Collection
     {
@@ -282,8 +262,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Model|null
-     *
-     *
      */
     public function first(array $columns = ['*'])
     {
@@ -304,9 +282,7 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
-     *
-     *
+     * @return Builder|Model
      */
     public function create(array $parameters = [])
     {
@@ -329,9 +305,7 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
-     *
-     *
+     * @return Builder|Model
      */
     public function updateOrCreate(array $where = [], array $values = [])
     {
@@ -353,9 +327,7 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
-     *
-     *
+     * @return Builder|Model
      */
     public function update(int $id, array $parameters = [])
     {
@@ -378,8 +350,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws Exception
      *
      * @return BaseInterface
-     *
-     *
      */
     public function delete(int $id): BaseInterface
     {
@@ -399,9 +369,7 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
-     *
-     *
+     * @return Builder|Model
      */
     public function firstOrNew(array $where)
     {
@@ -418,11 +386,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string $column
      * @param string $direction
      *
-     * @return mixed
-     *
-     *
+     * @return BaseInterface
      */
-    public function orderBy(string $column, string $direction = 'asc')
+    public function orderBy(string $column, string $direction = 'asc'): BaseInterface
     {
         $this->entity = $this->getEntity()->orderBy($column, $direction);
 
@@ -435,8 +401,6 @@ abstract class BaseRepository implements BaseInterface
      * @param array $relations
      *
      * @return BaseInterface
-     *
-     *
      */
     public function with($relations): BaseInterface
     {
@@ -449,8 +413,6 @@ abstract class BaseRepository implements BaseInterface
      * Begin database transaction.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function transactionBegin(): BaseInterface
     {
@@ -463,8 +425,6 @@ abstract class BaseRepository implements BaseInterface
      * Commit database transaction.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function transactionCommit(): BaseInterface
     {
@@ -477,8 +437,6 @@ abstract class BaseRepository implements BaseInterface
      * Rollback transaction.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function transactionRollback(): BaseInterface
     {
@@ -497,8 +455,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function findWhere(array $where, array $columns = ['*']): Collection
     {
@@ -522,8 +478,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection
     {
@@ -547,8 +501,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return Collection
-     *
-     *
      */
     public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection
     {
@@ -572,8 +524,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return bool
-     *
-     *
      */
     public function chunk(int $limit, callable $callback, array $columns = ['*']): bool
     {
@@ -595,8 +545,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return int
-     *
-     *
      */
     public function count(array $columns = ['*']): int
     {
@@ -615,7 +563,6 @@ abstract class BaseRepository implements BaseInterface
      * @param string $column
      *
      * @return mixed
-     *
      */
     public function sum(string $column)
     {
@@ -665,8 +612,6 @@ abstract class BaseRepository implements BaseInterface
      * @throws RepositoryEntityException
      *
      * @return mixed
-     *
-     *
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -682,9 +627,7 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Get records with trashed entities.
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function withTrashed(): BaseInterface
     {
@@ -696,9 +639,7 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Get only trashed entities.
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function onlyTrashed(): BaseInterface
     {
@@ -716,9 +657,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): BaseInterface
     {
@@ -734,9 +673,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string $operator
      * @param int    $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orHas($relation, $operator = '>=', $count = 1): BaseInterface
     {
@@ -752,9 +689,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function doesntHave($relation, $boolean = 'and', Closure $callback = null): BaseInterface
     {
@@ -768,9 +703,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param $relation
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orDoesntHave($relation): BaseInterface
     {
@@ -787,9 +720,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
@@ -806,9 +737,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
@@ -823,9 +752,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $relation
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function whereDoesntHave($relation, Closure $callback = null): BaseInterface
     {
@@ -840,9 +767,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $relation
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orWhereDoesntHave($relation, Closure $callback = null): BaseInterface
     {
@@ -861,9 +786,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): BaseInterface
     {
@@ -880,9 +803,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string $operator
      * @param int    $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orHasMorph($relation, $types, $operator = '>=', $count = 1): BaseInterface
     {
@@ -899,9 +820,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null): BaseInterface
     {
@@ -916,9 +835,7 @@ abstract class BaseRepository implements BaseInterface
      * @param $relation
      * @param $types
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orDoesntHaveMorph($relation, $types): BaseInterface
     {
@@ -936,9 +853,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
@@ -956,9 +871,7 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
@@ -974,9 +887,7 @@ abstract class BaseRepository implements BaseInterface
      * @param $types
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function whereDoesntHaveMorph($relation, $types, Closure $callback = null): BaseInterface
     {
@@ -992,9 +903,7 @@ abstract class BaseRepository implements BaseInterface
      * @param $types
      * @param Closure|null $callback
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null): BaseInterface
     {
@@ -1008,9 +917,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param string|array $relations
      *
-     * @return $this
-     *
-     *
+     * @return BaseInterface
      */
     public function withCount($relations): BaseInterface
     {

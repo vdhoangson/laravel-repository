@@ -1,55 +1,55 @@
 {
-    "name": "vdhoangson/laravel-repository",
-    "description": "Repository pattern package for Laravel framework",
-    "type": "library",
-    "keywords": [
-        "vdhoangson",
-        "laravel-repository",
-        "repository pattern",
-        "repository",
-        "framework",
-        "laravel"
-    ],
-    "require": {
-        "php": "^8.0",
-        "ext-json": "*",
-        "ext-libxml": "*",
-        "ext-simplexml": "*",
-        "illuminate/contracts": "^9.0",
-        "illuminate/database": "^9.0",
-        "illuminate/support": "^9.0",
-        "illuminate/container": "^9.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.0"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "vdhoangson",
-            "email": "vdhoangson@gmail.com",
-            "role": "Developer"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Vdhoangson\\LaravelRepository\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Vdhoangson\\LaravelRepository\\Tests\\": "tests"
-        }
-    },
-    "scripts": {
-        "test": "vendor/bin/phpunit"
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Vdhoangson\\LaravelRepository\\Providers\\LaravelRepositoryServiceProvider"
-            ]
-        }
-    },
-    "minimum-stability": "stable"
+  "name": "vdhoangson/laravel-repository",
+  "description": "Repository pattern package for Laravel framework",
+  "type": "library",
+  "keywords": [
+    "vdhoangson",
+    "laravel-repository",
+    "repository pattern",
+    "repository",
+    "framework",
+    "laravel"
+  ],
+  "require": {
+    "php": "^8.0",
+    "ext-json": "*",
+    "ext-libxml": "*",
+    "ext-simplexml": "*",
+    "illuminate/contracts": "^9.0",
+    "illuminate/database": "^9.0",
+    "illuminate/support": "^9.0",
+    "illuminate/container": "^9.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "vdhoangson",
+      "email": "vdhoangson@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Vdhoangson\\LaravelRepository\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Vdhoangson\\LaravelRepository\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Vdhoangson\\LaravelRepository\\Providers\\LaravelRepositoryServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "stable"
 }

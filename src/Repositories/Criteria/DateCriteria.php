@@ -55,8 +55,6 @@ class DateCriteria extends BaseCriteria
      * @param Model|Builder $entity
      *
      * @return Model|Builder
-     *
-     *
      */
     public function apply($entity)
     {
