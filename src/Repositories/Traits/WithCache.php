@@ -41,8 +41,6 @@ trait WithCache
      * Skip cache.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function skipCache(): BaseInterface
     {
@@ -55,8 +53,6 @@ trait WithCache
      * Skip auth user tag.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function skipUserTag(): BaseInterface
     {
@@ -71,8 +67,6 @@ trait WithCache
      * @param int $tag
      *
      * @return BaseInterface
-     *
-     *
      */
     public function setUserTag(int $tag): BaseInterface
     {
@@ -85,8 +79,6 @@ trait WithCache
      * Clear manually set user tag.
      *
      * @return BaseInterface
-     *
-     *
      */
     public function clearUserTag(): BaseInterface
     {
@@ -99,8 +91,6 @@ trait WithCache
      * Clear cache.
      *
      * @return $this|BaseInterface
-     *
-     *
      */
     public function clearCache(): BaseInterface
     {
@@ -116,8 +106,6 @@ trait WithCache
      * @param array  $parameters
      *
      * @return string
-     *
-     *
      */
     protected function getCacheKey(string $method, array $parameters): string
     {
@@ -132,7 +120,7 @@ trait WithCache
             $method,
             $className,
             $this->getTag(),
-            md5(serialize($parameters).$criteria)
+            md5(serialize($parameters) . $criteria)
         );
     }
 
@@ -140,8 +128,6 @@ trait WithCache
      * Serialize criteria pushed into repository.
      *
      * @return string
-     *
-     *
      */
     protected function getSerializedCriteria(): string
     {
@@ -162,8 +148,8 @@ trait WithCache
                     }
 
                     return [
-                        'hash'       => $hash,
-                        'criteria'   => $reflectionClass->getName(),
+                        'hash' => $hash,
+                        'criteria' => $reflectionClass->getName(),
                         'properties' => $reflectionClass->getProperties(),
                         'parameters' => $parameters,
                     ];
@@ -179,8 +165,6 @@ trait WithCache
      * @param array $columns
      *
      * @return Collection
-     *
-     *
      */
     public function all(array $columns = ['*']): Collection
     {
@@ -206,8 +190,6 @@ trait WithCache
      * @param array $columns
      *
      * @return Collection
-     *
-     *
      */
     public function get(array $columns = ['*']): Collection
     {
@@ -233,8 +215,6 @@ trait WithCache
      * @param array $columns
      *
      * @return Model|null
-     *
-     *
      */
     public function first(array $columns = ['*'])
     {
@@ -260,8 +240,6 @@ trait WithCache
      * @param array $where
      *
      * @return mixed
-     *
-     *
      */
     public function firstOrNew(array $where)
     {
@@ -288,8 +266,6 @@ trait WithCache
      * @param array $columns
      *
      * @return Collection
-     *
-     *
      */
     public function findWhere(array $where, array $columns = ['*']): Collection
     {
@@ -317,8 +293,6 @@ trait WithCache
      * @param array  $columns
      *
      * @return Collection
-     *
-     *
      */
     public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection
     {
@@ -346,8 +320,6 @@ trait WithCache
      * @param array  $columns
      *
      * @return Collection
-     *
-     *
      */
     public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection
     {
@@ -373,8 +345,6 @@ trait WithCache
      * @param array $parameters
      *
      * @return mixed
-     *
-     *
      */
     public function create(array $parameters = [])
     {
@@ -390,8 +360,6 @@ trait WithCache
      * @param array $values
      *
      * @return mixed
-     *
-     *
      */
     public function updateOrCreate(array $where = [], array $values = [])
     {
@@ -407,8 +375,6 @@ trait WithCache
      * @param array $parameters
      *
      * @return mixed
-     *
-     *
      */
     public function update(int $id, array $parameters = [])
     {
@@ -423,8 +389,6 @@ trait WithCache
      * @param int $id
      *
      * @return BaseInterface
-     *
-     *
      */
     public function delete(int $id): BaseInterface
     {
@@ -442,8 +406,6 @@ trait WithCache
      * @param null   $page
      *
      * @return mixed
-     *
-     *
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -472,8 +434,6 @@ trait WithCache
      * @param null   $page
      *
      * @return mixed
-     *
-     *
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -502,8 +462,6 @@ trait WithCache
      * @throws RepositoryEntityException
      *
      * @return int
-     *
-     *
      */
     public function count(array $columns = ['*']): int
     {
@@ -558,29 +516,27 @@ trait WithCache
     private function getTag(): string
     {
         if ($this->skipUserTag) {
-            return class_basename($this).'_0';
+            return class_basename($this) . '_0';
         }
 
         // If user tag was set manually, user it.
         if ($this->userTag !== null) {
-            return class_basename($this).'_'.$this->userTag;
+            return class_basename($this) . '_' . $this->userTag;
         }
 
         foreach ($this->getCacheGuards() as $guard) {
             if (auth($guard)->check()) {
-                return class_basename($this).'_'.auth($guard)->user()->getAuthIdentifier();
+                return class_basename($this) . '_' . auth($guard)->user()->getAuthIdentifier();
             }
         }
 
-        return class_basename($this).'_0';
+        return class_basename($this) . '_0';
     }
 
     /**
      * Checking if caching is activated in config file.
      *
      * @return bool
-     *
-     *
      */
     private function cacheActive(): bool
     {
@@ -591,8 +547,6 @@ trait WithCache
      * Get cache time (in seconds).
      *
      * @return int
-     *
-     *
      */
     private function getCacheTime(): int
     {
@@ -603,8 +557,6 @@ trait WithCache
      * Get cache guards to search for auth user ID.
      *
      * @return array
-     *
-     *
      */
     private function getCacheGuards(): array
     {
