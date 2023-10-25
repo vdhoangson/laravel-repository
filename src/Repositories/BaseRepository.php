@@ -148,9 +148,9 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Get criteria.
      *
-     * @return Collection
+     * @return Collection|null
      */
-    public function getCriteria(): Collection
+    public function getCriteria(): Collection|null
     {
         return $this->criteria;
     }

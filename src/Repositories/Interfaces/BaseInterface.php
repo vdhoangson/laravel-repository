@@ -73,9 +73,9 @@ interface BaseInterface
     /**
      * Get criteria.
      *
-     * @return Collection
+     * @return Collection|null
      */
-    public function getCriteria(): Collection;
+    public function getCriteria(): Collection|null;
 
     /**
      * Apply criteria to eloquent query.
