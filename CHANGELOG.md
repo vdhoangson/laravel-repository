@@ -15,3 +15,7 @@
 ## v.1.0.3
 
     - Fix some bugs
+
+## v.1.0.4
+
+    - Add function findById

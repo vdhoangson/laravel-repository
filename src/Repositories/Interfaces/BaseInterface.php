@@ -242,6 +242,19 @@ interface BaseInterface
     public function transactionRollback(): self;
 
     /**
+     * Find by ID.
+     *
+     * @param int $id
+     * @param array $columns
+     *
+     * @throws BindingResolutionException
+     * @throws RepositoryEntityException
+     *
+     * @return TFirstDefault|TValue
+     */
+    public function findById(int $id, array $columns = ['*']);
+
+    /**
      * Find where.
      *
      * @param array $where

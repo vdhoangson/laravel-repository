@@ -446,6 +446,28 @@ abstract class BaseRepository implements BaseInterface
     }
 
     /**
+     * Find by ID.
+     *
+     * @param int $id
+     * @param array $columns
+     *
+     * @throws BindingResolutionException
+     * @throws RepositoryEntityException
+     *
+     * @return TFirstDefault|TValue
+     */
+    public function findById(int $id, array $columns = ['*'])
+    {
+        $this->applyCriteria();
+
+        $result = $this->findWhere(['id' => $id], $columns)->first();
+
+        $this->makeEntity();
+
+        return $result;
+    }
+
+    /**
      * Find where.
      *
      * @param array $where
