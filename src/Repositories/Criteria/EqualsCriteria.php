@@ -1,6 +1,6 @@
 <?php
 /**
- * OffsetCriteria
+ * EqualsCriteria
  * 
  * @package Vdhoangson\LaravelRepository\Repositories\Criteria
  * @author vdhoangson <vdhoangson@gmail.com>
@@ -12,24 +12,31 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Class OffsetCriteria.
+ * Class EqualsCriteria.
  *
  */
-class OffsetCriteria extends BaseCriteria
+class EqualsCriteria extends BaseCriteria
 {
     /**
-     * @var int
+     * @var string
      */
-    protected $offset;
+    protected string $column;
 
     /**
-     * OffsetCriteria constructor.
-     *
-     * @param int $offset
+     * @var string
      */
-    public function __construct(int $offset)
+    protected string $search;
+
+    /**
+     * EqualsCriteria constructor.
+     *
+     * @param string $column;
+     * @param string $search;
+     */
+    public function __construct(string $column, string $search)
     {
-        $this->offset = $offset;
+        $this->column = $column;
+        $this->search = $search;
     }
 
     /**
@@ -41,6 +48,6 @@ class OffsetCriteria extends BaseCriteria
      */
     public function apply($entity)
     {
-        return $entity->offset($this->offset);
+        return $entity->where($this->column, '=', $this->search);
     }
 }
