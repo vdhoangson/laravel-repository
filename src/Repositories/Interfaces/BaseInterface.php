@@ -263,9 +263,9 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection
+     * @return Collection|array
      */
-    public function findWhere(array $where, array $columns = ['*']): Collection;
+    public function findWhere(array $where, array $columns = ['*']): Collection|array;
 
     /**
      * Find where In.
@@ -277,9 +277,9 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection
+     * @return Collection|array
      */
-    public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection;
+    public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection|array;
 
     /**
      * Find where not In.
@@ -291,9 +291,20 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection
+     * @return Collection|array
      */
-    public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection;
+    public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection|array;
+
+    /**
+     * Find data by field and value
+     *
+     * @param       $field
+     * @param       $value
+     * @param array $columns
+     *
+     * @return Collection|array
+     */
+    public function findByField($field, $value = null, $columns = ['*']): Collection|array;
 
     /**
      * Chunk query results.
@@ -312,14 +323,14 @@ interface BaseInterface
     /**
      * Count results.
      *
-     * @param array $columns
+     * @param string|null $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return int
      */
-    public function count(array $columns = ['*']): int;
+    public function count($columns = '*'): int;
 
     /**
      * Retrieve the sum of the values of a given column.
@@ -334,10 +345,10 @@ interface BaseInterface
     /**
      * Paginate results.
      *
-     * @param null   $perPage
-     * @param array  $columns
-     * @param string $pageName
-     * @param null   $page
+     * @param int|null $perPage
+     * @param array    $columns
+     * @param string   $pageName
+     * @param int|null $page
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
@@ -349,10 +360,10 @@ interface BaseInterface
     /**
      * Paginate results (simple).
      *
-     * @param null   $perPage
-     * @param array  $columns
-     * @param string $pageName
-     * @param null   $page
+     * @param int|null $perPage
+     * @param array    $columns
+     * @param string   $pageName
+     * @param int|null $page
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException

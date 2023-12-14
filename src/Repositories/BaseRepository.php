@@ -353,8 +353,8 @@ abstract class BaseRepository implements BaseInterface
      */
     public function delete(int $id): BaseInterface
     {
-        $this->entity = $this->getEntity()->findOrFail($id);
-        $this->getEntity()->delete();
+        $result = $this->getEntity()->findOrFail($id);
+        $result->delete();
 
         $this->makeEntity();
 
@@ -476,9 +476,9 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection
+     * @return Collection|array
      */
-    public function findWhere(array $where, array $columns = ['*']): Collection
+    public function findWhere(array $where, array $columns = ['*']): Collection|array
     {
         $this->applyCriteria();
 
@@ -499,13 +499,13 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection
+     * @return Collection|array
      */
-    public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection
+    public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection|array
     {
         $this->applyCriteria();
 
-        $results = $this->getEntity()->whereIn($column, $where)->get();
+        $results = $this->getEntity()->whereIn($column, $where)->get($columns);
 
         $this->makeEntity();
 
@@ -522,13 +522,33 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection
+     * @return Collection|array
      */
-    public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection
+    public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection|array
     {
         $this->applyCriteria();
 
         $results = $this->getEntity()->whereNotIn($column, $where)->get($columns);
+
+        $this->makeEntity();
+
+        return $results;
+    }
+
+    /**
+     * Find data by field and value
+     *
+     * @param       $field
+     * @param       $value
+     * @param array $columns
+     *
+     * @return Collection|array
+     */
+    public function findByField($field, $value = null, $columns = ['*']): Collection|array
+    {
+        $this->applyCriteria();
+
+        $results = $this->getEntity()->where($field, '=', $value)->get($columns);
 
         $this->makeEntity();
 
@@ -561,22 +581,22 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Count results.
      *
-     * @param array $columns
+     * @param string|null $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return int
      */
-    public function count(array $columns = ['*']): int
+    public function count($columns = '*'): int
     {
         $this->applyCriteria();
 
-        $results = $this->getEntity()->count($columns);
+        $result = $this->getEntity()->count($columns);
 
         $this->makeEntity();
 
-        return $results;
+        return $result;
     }
 
     /**
@@ -590,20 +610,20 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
-        $results = $this->getEntity()->sum($column);
+        $result = $this->getEntity()->sum($column);
 
         $this->makeEntity();
 
-        return $results;
+        return $result;
     }
 
     /**
      * Paginate results.
      *
-     * @param null   $perPage
-     * @param array  $columns
-     * @param string $pageName
-     * @param null   $page
+     * @param int|null $perPage
+     * @param array    $columns
+     * @param string   $pageName
+     * @param int|null $page
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
@@ -625,10 +645,10 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Paginate results (simple).
      *
-     * @param null   $perPage
-     * @param array  $columns
-     * @param string $pageName
-     * @param null   $page
+     * @param int|null $perPage
+     * @param array    $columns
+     * @param string   $pageName
+     * @param int|null $page
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException

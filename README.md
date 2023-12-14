@@ -110,6 +110,7 @@ class ExampleController extends Controller {
 - findWhere(array $where, array $columns) - return all records that match where array
 - findWhereIn(string $column, array $where, array $columns)
 - findWhereNotIn(string $column, array $where, array $columns)
+- findByField($field, $value = null, $columns = ['*'])
 - chunk(int $limit, callable $callback, array $columns) - chunk query results
 - count(array $columns) - count results
 - paginate($perPage, $columns, $pageName, $page) - paginate results
