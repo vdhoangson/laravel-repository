@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * OffsetCriteria
+ * 
+ * @package Vdhoangson\LaravelRepository\Repositories\Criteria
+ * @author vdhoangson <vdhoangson@gmail.com>
+ * @link https://github.com/vdhoangson/laravel-repository
+ */
 namespace Vdhoangson\LaravelRepository\Repositories\Criteria;
 
 use Illuminate\Database\Eloquent\Model;

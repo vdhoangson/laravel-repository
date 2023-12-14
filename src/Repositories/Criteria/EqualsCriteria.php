@@ -1,6 +1,6 @@
 <?php
 /**
- * LimitCriteria
+ * EqualsCriteria
  * 
  * @package Vdhoangson\LaravelRepository\Repositories\Criteria
  * @author vdhoangson <vdhoangson@gmail.com>
@@ -12,24 +12,31 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Class LimitCriteria.
+ * Class EqualsCriteria.
  *
  */
-class LimitCriteria extends BaseCriteria
+class EqualsCriteria extends BaseCriteria
 {
     /**
-     * @var int
+     * @var string
      */
-    protected $limit;
+    protected string $column;
 
     /**
-     * LimitCriteria constructor.
-     *
-     * @param int $limit
+     * @var string
      */
-    public function __construct(int $limit)
+    protected string $search;
+
+    /**
+     * EqualsCriteria constructor.
+     *
+     * @param string $column;
+     * @param string $search;
+     */
+    public function __construct(string $column, string $search)
     {
-        $this->limit = $limit;
+        $this->column = $column;
+        $this->search = $search;
     }
 
     /**
@@ -38,10 +45,9 @@ class LimitCriteria extends BaseCriteria
      * @param Model|Builder $entity
      *
      * @return Model|Builder
-     *
      */
     public function apply($entity)
     {
-        return $entity->limit($this->limit);
+        return $entity->where($this->column, '=', $this->search);
     }
 }
