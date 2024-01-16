@@ -49,6 +49,11 @@ abstract class BaseRepository implements BaseInterface
     protected $skipCriteria = false;
 
     /**
+     * @var \Closure
+     */
+    protected $scopeQuery = null;
+
+    /**
      * BaseRepository constructor.
      *
      * @param Container $app
@@ -108,6 +113,16 @@ abstract class BaseRepository implements BaseInterface
         $this->entity = $entity;
 
         return $this;
+    }
+
+    /**
+     * Reset entity instance.
+     *
+     * @return void
+     */
+    public function resetEntity(): void
+    {
+        $this->makeEntity();
     }
 
     /**
@@ -213,6 +228,47 @@ abstract class BaseRepository implements BaseInterface
     }
 
     /**
+     * Query Scope
+     *
+     * @param Closure $scope
+     *
+     * @return $this
+     */
+    public function scopeQuery(Closure $scope): BaseInterface
+    {
+        $this->scopeQuery = $scope;
+
+        return $this;
+    }
+
+    /**
+     * Apply scope in current Query
+     *
+     * @return $this
+     */
+    public function applyScope(): BaseInterface
+    {
+        if (isset($this->scopeQuery) && is_callable($this->scopeQuery)) {
+            $callback = $this->scopeQuery;
+            $this->entity = $callback($this->getEntity());
+        }
+
+        return $this;
+    }
+
+    /**
+     * Reset Query Scope
+     *
+     * @return $this
+     */
+    public function resetScope(): BaseInterface
+    {
+        $this->scopeQuery = null;
+
+        return $this;
+    }
+
+    /**
      * Return eloquent collection of all records of entity
      * Criteria are not apply in this query.
      *
@@ -225,6 +281,10 @@ abstract class BaseRepository implements BaseInterface
      */
     public function all(array $columns = ['*']): Collection
     {
+        $this->applyCriteria();
+
+        $this->applyScope();
+
         $results = $this->getEntity()->all($columns);
 
         $this->makeEntity();
@@ -246,9 +306,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->get($columns);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -267,9 +329,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->first($columns);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -291,7 +355,7 @@ abstract class BaseRepository implements BaseInterface
 
         $results = $this->getEntity();
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -313,7 +377,7 @@ abstract class BaseRepository implements BaseInterface
 
         $results = $this->getEntity();
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -337,7 +401,7 @@ abstract class BaseRepository implements BaseInterface
 
         $results = $this->getEntity();
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -356,7 +420,7 @@ abstract class BaseRepository implements BaseInterface
         $result = $this->getEntity()->findOrFail($id);
         $result->delete();
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $this;
     }
@@ -375,7 +439,7 @@ abstract class BaseRepository implements BaseInterface
     {
         $results = $this->getEntity()->firstOrNew($where);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -398,11 +462,11 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Relation sub-query.
      *
-     * @param array $relations
+     * @param array|string $relations
      *
      * @return BaseInterface
      */
-    public function with($relations): BaseInterface
+    public function with(array|string $relations): BaseInterface
     {
         $this->entity = $this->getEntity()->with($relations);
 
@@ -460,9 +524,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $result = $this->findWhere(['id' => $id], $columns)->first();
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $result;
     }
@@ -482,9 +548,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->where($where)->get($columns);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -505,9 +573,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->whereIn($column, $where)->get($columns);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -528,9 +598,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->whereNotIn($column, $where)->get($columns);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -548,9 +620,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->where($field, '=', $value)->get($columns);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -571,9 +645,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->select($columns)->chunk($limit, $callback);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -592,9 +668,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $result = $this->getEntity()->count($columns);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $result;
     }
@@ -610,9 +688,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $result = $this->getEntity()->sum($column);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $result;
     }
@@ -635,9 +715,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->paginate($perPage, $columns, $pageName, $page);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }
@@ -659,9 +741,11 @@ abstract class BaseRepository implements BaseInterface
     {
         $this->applyCriteria();
 
+        $this->applyScope();
+
         $results = $this->getEntity()->simplePaginate($perPage, $columns, $pageName, $page);
 
-        $this->makeEntity();
+        $this->resetEntity();
 
         return $results;
     }

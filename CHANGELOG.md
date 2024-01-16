@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.0
+
+    - Add scopeQuery
+    - Optimize repository
+
 ## v1.0.5
 
     - Add function findByField

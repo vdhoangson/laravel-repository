@@ -104,6 +104,29 @@ interface BaseInterface
     public function clearCriteria(): self;
 
     /**
+     * Query Scope
+     *
+     * @param Closure $scope
+     *
+     * @return $this
+     */
+    public function scopeQuery(Closure $scope): self;
+
+    /**
+     * Apply scope in current Query
+     *
+     * @return $this
+     */
+    public function applyScope(): self;
+
+    /**
+     * Reset Query Scope
+     *
+     * @return $this
+     */
+    public function resetScope(): self;
+
+    /**
      * Return eloquent collection of all records of entity
      * Criteria are not apply in this query.
      *
@@ -214,11 +237,11 @@ interface BaseInterface
     /**
      * Relation sub-query.
      *
-     * @param array $relations
+     * @param array|string $relations
      *
      * @return BaseInterface
      */
-    public function with($relations): self;
+    public function with(array|string $relations): self;
 
     /**
      * Begin database transaction.
