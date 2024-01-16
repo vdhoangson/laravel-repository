@@ -6,8 +6,6 @@ Repository pattern package for Laravel framework.
 ![GitHub](https://img.shields.io/github/license/vdhoangson/laravel-repository?label=License)
 ![Packagist](https://img.shields.io/packagist/dt/vdhoangson/laravel-repository?label=Downloads)
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/vdhoangson/laravel-repository?label=PHP)
-[![StyleCI](https://github.styleci.io/repos/212760382/shield?branch=master)](https://github.styleci.io/repos/212760382)
-[![Build Status](https://travis-ci.com/vdhoangson/laravel-repository.svg?branch=master)](https://travis-ci.com/vdhoangson/laravel-repository)
 
 ### Version compatibility
 
@@ -164,7 +162,6 @@ so to disable this feature for selected repository call skipUserTag() method in 
 ```php
 class ExampleRepository extends BaseRepository implements ExampleRepositoryInterface
 {
-
     use WithCache;
 
     /**
@@ -179,7 +176,6 @@ class ExampleRepository extends BaseRepository implements ExampleRepositoryInter
         parent::__construct($app);
         $this->skipUserTag();
     }
-
 }
 ```
 
@@ -191,7 +187,7 @@ You can use setUserTag () function to manually set user ID for cache tag. To cle
 To force fetch data from database, skipping cached data, use skipCache() method. Example:
 
 ```php
-$this-exampleService->getRepository->skipCache()->findWhere(...)
+$this->repository->skipCache()->findWhere(...)
 ```
 
 ##### Disable cache
@@ -200,6 +196,14 @@ To quick disable cache i.ex for debugging, set REPOSITORY_CACHE variable to fals
 
 ```dotenv
 REPOSITORY_CACHE=false
+```
+
+### Use scopeQuery
+
+```php
+$data = $this->repository->scopeQuery(function($query){
+    return $query->orderBy('sort_order','asc');
+})->all();
 ```
 
 ## Changelog
