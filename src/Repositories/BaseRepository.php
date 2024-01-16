@@ -287,7 +287,8 @@ abstract class BaseRepository implements BaseInterface
 
         $results = $this->getEntity()->all($columns);
 
-        $this->makeEntity();
+        $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -311,6 +312,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->get($columns);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -334,6 +336,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->first($columns);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -529,6 +532,7 @@ abstract class BaseRepository implements BaseInterface
         $result = $this->findWhere(['id' => $id], $columns)->first();
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $result;
     }
@@ -553,6 +557,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->where($where)->get($columns);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -578,6 +583,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->whereIn($column, $where)->get($columns);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -603,6 +609,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->whereNotIn($column, $where)->get($columns);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -625,6 +632,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->where($field, '=', $value)->get($columns);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -650,6 +658,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->select($columns)->chunk($limit, $callback);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -673,6 +682,7 @@ abstract class BaseRepository implements BaseInterface
         $result = $this->getEntity()->count($columns);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $result;
     }
@@ -693,6 +703,7 @@ abstract class BaseRepository implements BaseInterface
         $result = $this->getEntity()->sum($column);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $result;
     }
@@ -720,6 +731,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->paginate($perPage, $columns, $pageName, $page);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
@@ -746,6 +758,7 @@ abstract class BaseRepository implements BaseInterface
         $results = $this->getEntity()->simplePaginate($perPage, $columns, $pageName, $page);
 
         $this->resetEntity();
+        $this->resetScope();
 
         return $results;
     }
