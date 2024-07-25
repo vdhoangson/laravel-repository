@@ -463,7 +463,7 @@ trait WithCache
      *
      * @return int
      */
-    public function count(array $columns = ['*']): int
+    public function count(string|null $columns = '*'): int
     {
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::count($columns);

@@ -673,7 +673,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @return int
      */
-    public function count($columns = '*'): int
+    public function count(string|null $columns = '*'): int
     {
         $this->applyCriteria();
 

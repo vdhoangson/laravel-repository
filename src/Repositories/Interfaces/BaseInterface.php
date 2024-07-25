@@ -353,7 +353,7 @@ interface BaseInterface
      *
      * @return int
      */
-    public function count($columns = '*'): int;
+    public function count(string|null $columns = '*'): int;
 
     /**
      * Retrieve the sum of the values of a given column.
