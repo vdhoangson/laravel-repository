@@ -25,33 +25,38 @@ abstract class BaseRepository implements BaseInterface
      *
      * @var Container
      */
-    protected $app;
+    public $app;
 
     /**
      * Entity class that will be use in repository.
      *
      * @var Model
      */
-    protected $entity;
+    protected Model $entity;
+
+    /**
+     * @var Builder
+     */
+    protected $query;
 
     /**
      * Criteria collection.
      *
      * @var Collection
      */
-    protected $criteria;
+    public $criteria;
 
     /**
      * Determine if criteria will be skipped in query.
      *
      * @var bool
      */
-    protected $skipCriteria = false;
+    public $skipCriteria = false;
 
     /**
      * @var \Closure
      */
-    protected $scopeQuery = null;
+    public $scopeQuery = null;
 
     /**
      * BaseRepository constructor.
@@ -67,6 +72,8 @@ abstract class BaseRepository implements BaseInterface
         $this->criteria = new Collection();
         $this->makeEntity();
     }
+
+    abstract public function entity(): string;
 
     /**
      * Make new entity instance.
@@ -87,6 +94,7 @@ abstract class BaseRepository implements BaseInterface
         }
 
         $this->entity = $entity;
+        $this->query = $this->entity->newQuery();
 
         return $this;
     }
@@ -115,6 +123,28 @@ abstract class BaseRepository implements BaseInterface
         return $this;
     }
 
+    public function setQuery(Builder $query): void
+    {
+        $this->query = $query;
+    }
+
+    public function getQuery(): Builder
+    {
+        if (!isset($this->query)) {
+            $this->query = $this->getEntity()->newQuery();
+        }
+
+        return $this->query;
+    }
+
+    /**
+     * @return Builder
+     */
+    public function resetQuery()
+    {
+        return $this->query = $this->entity->newQuery();
+    }
+
     /**
      * Reset entity instance.
      *
@@ -128,12 +158,18 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Push criteria.
      *
-     * @param BaseCriteriaInterface $criteria
+     * @param BaseCriteriaInterface|string $criteria
      *
      * @return BaseInterface
      */
-    public function pushCriteria(BaseCriteriaInterface $criteria): BaseInterface
+    public function pushCriteria($criteria): BaseInterface
     {
+        if (is_string($criteria)) {
+            $criteria = new $criteria();
+        }
+        if (!$criteria instanceof BaseCriteriaInterface) {
+            throw new \Exception('Class ' . get_class($criteria) . ' must be an instance of Vdhoangson\\LaravelRepository\\Repositories\\Criteria\\Interfaces\\BaseCriteriaInterface');
+        }
         $this->criteria->push($criteria);
 
         return $this;
@@ -142,20 +178,25 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Pop criteria.
      *
-     * @param string $criteriaNamespace
+     * @param  $criteria
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return BaseInterface
      */
-    public function popCriteria(string $criteriaNamespace): BaseInterface
+    public function popCriteria($criteria): BaseInterface
     {
-        $this->criteria = $this->criteria->reject(function ($item) use ($criteriaNamespace) {
-            return get_class($item) === $criteriaNamespace;
-        });
+        $this->criteria = $this->criteria->reject(function ($item) use ($criteria) {
+            if (is_object($item) && is_string($criteria)) {
+                return get_class($item) === $criteria;
+            }
+            if (is_string($item) && is_object($criteria)) {
+                return $item === get_class($criteria);
+            }
 
-        $this->makeEntity();
+            return get_class($item) === get_class($criteria);
+        });
 
         return $this;
     }
@@ -250,7 +291,7 @@ abstract class BaseRepository implements BaseInterface
     {
         if (isset($this->scopeQuery) && is_callable($this->scopeQuery)) {
             $callback = $this->scopeQuery;
-            $this->entity = $callback($this->getEntity());
+            $this->query = $callback($this->getQuery());
         }
 
         return $this;
@@ -272,22 +313,21 @@ abstract class BaseRepository implements BaseInterface
      * Return eloquent collection of all records of entity
      * Criteria are not apply in this query.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return Collection
      */
-    public function all(array $columns = ['*']): Collection
+    public function all(array|string $columns = '*'): Collection
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
-        $results = $this->getEntity()->all($columns);
+        $results = $this->entity->all($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -296,22 +336,21 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Return eloquent collection of matching records.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return Collection
      */
-    public function get(array $columns = ['*']): Collection
+    public function get(array|string $columns = '*'): Collection
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
-        $results = $this->getEntity()->get($columns);
+        $results = $this->entity->get($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -320,22 +359,22 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Get first record.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return Model|null
      */
-    public function first(array $columns = ['*'])
+    public function first(array|string $columns = '*')
     {
         $this->applyCriteria();
 
         $this->applyScope();
 
-        $results = $this->getEntity()->first($columns);
+        $results = $this->entity->first($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -353,14 +392,11 @@ abstract class BaseRepository implements BaseInterface
      */
     public function create(array $parameters = [])
     {
-        $this->entity = $this->getEntity()->newInstance($parameters);
-        $this->getEntity()->save();
+        $result = $this->entity->create($parameters);
 
-        $results = $this->getEntity();
+        $this->resetQuery();
 
-        $this->resetEntity();
-
-        return $results;
+        return $result;
     }
 
     /**
@@ -376,11 +412,11 @@ abstract class BaseRepository implements BaseInterface
      */
     public function updateOrCreate(array $where = [], array $values = [])
     {
-        $this->entity = $this->getEntity()->updateOrCreate($where, $values);
+        $this->entity = $this->entity->updateOrCreate($where, $values);
 
         $results = $this->getEntity();
 
-        $this->resetEntity();
+        $this->resetQuery();
 
         return $results;
     }
@@ -389,24 +425,23 @@ abstract class BaseRepository implements BaseInterface
      * Update entity.
      *
      * @param int   $id
-     * @param array $parameters
+     * @param array $attributes
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return Builder|Model
      */
-    public function update(int $id, array $parameters = [])
+    public function update(int $id, array $attributes = [])
     {
-        $this->entity = $this->getEntity()->findOrFail($id);
-        $this->getEntity()->fill($parameters);
-        $this->getEntity()->save();
+        $model = $this->query->findOrFail($id);
+        $model->fill($attributes);
+        $model->save();
 
-        $results = $this->getEntity();
+        $this->resetScope();
+        $this->resetQuery();
 
-        $this->resetEntity();
-
-        return $results;
+        return $model;
     }
 
     /**
@@ -420,10 +455,10 @@ abstract class BaseRepository implements BaseInterface
      */
     public function delete(int $id): BaseInterface
     {
-        $result = $this->getEntity()->findOrFail($id);
+        $result = $this->query->findOrFail($id);
         $result->delete();
 
-        $this->resetEntity();
+        $this->resetQuery();
 
         return $this;
     }
@@ -440,9 +475,9 @@ abstract class BaseRepository implements BaseInterface
      */
     public function firstOrNew(array $where)
     {
-        $results = $this->getEntity()->firstOrNew($where);
+        $results = $this->query->firstOrNew($where);
 
-        $this->resetEntity();
+        $this->resetQuery();
 
         return $results;
     }
@@ -457,7 +492,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orderBy(string $column, string $direction = 'asc'): BaseInterface
     {
-        $this->entity = $this->getEntity()->orderBy($column, $direction);
+        $this->query = $this->query->orderBy($column, $direction);
 
         return $this;
     }
@@ -471,7 +506,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function with(array|string $relations): BaseInterface
     {
-        $this->entity = $this->getEntity()->with($relations);
+        $this->query = $this->query->with($relations);
 
         return $this;
     }
@@ -516,22 +551,21 @@ abstract class BaseRepository implements BaseInterface
      * Find by ID.
      *
      * @param int $id
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return TFirstDefault|TValue
      */
-    public function findById(int $id, array $columns = ['*'])
+    public function findById(int $id, array|string $columns = '*')
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
-        $result = $this->findWhere(['id' => $id], $columns)->first();
+        $result = $this->query->where(['id' => $id])->first($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $result;
@@ -540,23 +574,23 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Find where.
      *
-     * @param array $where
-     * @param array $columns
+     * @param array|string $conditions
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection|array
+     * @return Collection
      */
-    public function findWhere(array $where, array $columns = ['*']): Collection|array
+    public function findWhere(array|string $conditions, array|string $columns = '*'): Collection
     {
         $this->applyCriteria();
-
         $this->applyScope();
+        $this->applyConditions($conditions);
 
-        $results = $this->getEntity()->where($where)->get($columns);
+        $results = $this->query->get($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -567,22 +601,21 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param string $column
      * @param array  $where
-     * @param array  $columns
+     * @param array|string  $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection|array
+     * @return Collection
      */
-    public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection|array
+    public function findWhereIn(string $column, array $where, array|string $columns = '*'): Collection
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
-        $results = $this->getEntity()->whereIn($column, $where)->get($columns);
+        $results = $this->query->whereIn($column, $where)->get($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -600,7 +633,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @return Collection|array
      */
-    public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection|array
+    public function findWhereNotIn(string $column, array $where, array|string $columns = '*'): Collection|array
     {
         $this->applyCriteria();
 
@@ -608,7 +641,7 @@ abstract class BaseRepository implements BaseInterface
 
         $results = $this->getEntity()->whereNotIn($column, $where)->get($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -619,7 +652,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param       $field
      * @param       $value
-     * @param array $columns
+     * @param array|string $columns
      *
      * @return Collection|array
      */
@@ -631,7 +664,7 @@ abstract class BaseRepository implements BaseInterface
 
         $results = $this->getEntity()->where($field, '=', $value)->get($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -649,7 +682,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @return bool
      */
-    public function chunk(int $limit, callable $callback, array $columns = ['*']): bool
+    public function chunk(int $limit, callable $callback, array|string $columns = '*'): bool
     {
         $this->applyCriteria();
 
@@ -657,7 +690,7 @@ abstract class BaseRepository implements BaseInterface
 
         $results = $this->getEntity()->select($columns)->chunk($limit, $callback);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -681,7 +714,7 @@ abstract class BaseRepository implements BaseInterface
 
         $result = $this->getEntity()->count($columns);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $result;
@@ -697,12 +730,11 @@ abstract class BaseRepository implements BaseInterface
     public function sum(string $column)
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
         $result = $this->getEntity()->sum($column);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $result;
@@ -712,25 +744,25 @@ abstract class BaseRepository implements BaseInterface
      * Paginate results.
      *
      * @param int|null $perPage
-     * @param array    $columns
+     * @param array|string  $columns
      * @param string   $pageName
      * @param int|null $page
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      *
      */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate($perPage = null, $columns = '*', $pageName = 'page', $page = null)
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
-        $results = $this->getEntity()->paginate($perPage, $columns, $pageName, $page);
+        $results = $this->query->paginate($perPage, $columns, $pageName, $page);
+        $results->appends(app('request')->query());
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -752,12 +784,11 @@ abstract class BaseRepository implements BaseInterface
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
         $results = $this->getEntity()->simplePaginate($perPage, $columns, $pageName, $page);
 
-        $this->resetEntity();
+        $this->resetQuery();
         $this->resetScope();
 
         return $results;
@@ -1063,5 +1094,24 @@ abstract class BaseRepository implements BaseInterface
         $this->entity = $this->getEntity()->withCount($relations);
 
         return $this;
+    }
+
+    /**
+     * Applies the given where conditions to the model.
+     *
+     * @param array $where
+     *
+     * @return void
+     */
+    protected function applyConditions(array $where)
+    {
+        foreach ($where as $attribute => $value) {
+            if (is_array($value)) {
+                list($attribute, $condition, $val) = $value;
+                $this->query = $this->query->where($attribute, $condition, $val);
+            } else {
+                $this->query = $this->query->where($attribute, '=', $value);
+            }
+        }
     }
 }

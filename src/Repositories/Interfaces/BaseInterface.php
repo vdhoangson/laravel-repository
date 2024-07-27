@@ -49,26 +49,30 @@ interface BaseInterface
      */
     public function setEntity($entity): self;
 
+    public function setQuery(Builder $query): void;
+
+    public function getQuery(): Builder;
+
     /**
      * Push criteria.
      *
-     * @param BaseCriteriaInterface $criteria
+     * @param BaseCriteriaInterface|string $criteria
      *
      * @return BaseInterface
      */
-    public function pushCriteria(BaseCriteriaInterface $criteria): self;
+    public function pushCriteria($criteria): self;
 
     /**
      * Pop criteria.
      *
-     * @param string $criteriaNamespace
+     * @param  $criteria
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return BaseInterface
      */
-    public function popCriteria(string $criteriaNamespace): self;
+    public function popCriteria($criteria): self;
 
     /**
      * Get criteria.
@@ -130,38 +134,38 @@ interface BaseInterface
      * Return eloquent collection of all records of entity
      * Criteria are not apply in this query.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return Collection
      */
-    public function all(array $columns = ['*']): Collection;
+    public function all(array|string $columns = '*'): Collection;
 
     /**
      * Return eloquent collection of matching records.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return Collection
      */
-    public function get(array $columns = ['*']): Collection;
+    public function get(array|string $columns = '*'): Collection;
 
     /**
      * Get first record.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return Model|null
      */
-    public function first(array $columns = ['*']);
+    public function first(array|string $columns = '*');
 
     /**
      * Save new entity.
@@ -268,27 +272,27 @@ interface BaseInterface
      * Find by ID.
      *
      * @param int $id
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
      * @return TFirstDefault|TValue
      */
-    public function findById(int $id, array $columns = ['*']);
+    public function findById(int $id, array|string $columns = '*');
 
     /**
      * Find where.
      *
-     * @param array $where
-     * @param array $columns
+     * @param array|string $conditions
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection|array
+     * @return Collection
      */
-    public function findWhere(array $where, array $columns = ['*']): Collection|array;
+    public function findWhere(array|string $conditions, array|string $columns = '*'): Collection;
 
     /**
      * Find where In.
@@ -300,9 +304,9 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection|array
+     * @return Collection
      */
-    public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection|array;
+    public function findWhereIn(string $column, array $where, array|string $columns = '*'): Collection;
 
     /**
      * Find where not In.
@@ -316,14 +320,14 @@ interface BaseInterface
      *
      * @return Collection|array
      */
-    public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection|array;
+    public function findWhereNotIn(string $column, array $where, array|string $columns = '*'): Collection|array;
 
     /**
      * Find data by field and value
      *
      * @param       $field
      * @param       $value
-     * @param array $columns
+     * @param array|string $columns
      *
      * @return Collection|array
      */
@@ -341,7 +345,7 @@ interface BaseInterface
      *
      * @return bool
      */
-    public function chunk(int $limit, callable $callback, array $columns = ['*']): bool;
+    public function chunk(int $limit, callable $callback, array|string $columns = '*'): bool;
 
     /**
      * Count results.
@@ -369,16 +373,16 @@ interface BaseInterface
      * Paginate results.
      *
      * @param int|null $perPage
-     * @param array    $columns
+     * @param array|string    $columns
      * @param string   $pageName
      * @param int|null $page
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return mixed
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+    public function paginate($perPage = null, $columns = '*', $pageName = 'page', $page = null);
 
     /**
      * Paginate results (simple).

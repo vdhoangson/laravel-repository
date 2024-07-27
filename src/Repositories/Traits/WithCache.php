@@ -162,11 +162,11 @@ trait WithCache
      * Return eloquent collection of all records of entity
      * Criteria are not apply in this query.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @return Collection
      */
-    public function all(array $columns = ['*']): Collection
+    public function all(array|string $columns = '*'): Collection
     {
         if ($this->skipCache) {
             return parent::all($columns);
@@ -187,11 +187,11 @@ trait WithCache
     /**
      * Return eloquent collection of matching records.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @return Collection
      */
-    public function get(array $columns = ['*']): Collection
+    public function get(array|string $columns = '*'): Collection
     {
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::get($columns);
@@ -212,11 +212,11 @@ trait WithCache
     /**
      * Get first record.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @return Model|null
      */
-    public function first(array $columns = ['*'])
+    public function first(array|string $columns = '*')
     {
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::first($columns);
@@ -262,15 +262,18 @@ trait WithCache
     /**
      * Find where.
      *
-     * @param array $where
-     * @param array $columns
+     * @param array|string $conditions
+     * @param array|string $columns
+     *
+     * @throws BindingResolutionException
+     * @throws RepositoryEntityException
      *
      * @return Collection
      */
-    public function findWhere(array $where, array $columns = ['*']): Collection
+    public function findWhere(array|string $conditions, array|string $columns = ['*']): Collection
     {
         if ($this->skipCache || !$this->cacheActive()) {
-            return parent::findWhere($where, $columns);
+            return parent::findWhere($conditions, $columns);
         }
 
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
@@ -279,8 +282,8 @@ trait WithCache
         return Cache::tags([$this->getTag()])->remember(
             $cacheKey,
             $this->getCacheTime(),
-            function () use ($where, $columns) {
-                return parent::findWhere($where, $columns);
+            function () use ($conditions, $columns) {
+                return parent::findWhere($conditions, $columns);
             }
         );
     }
@@ -294,10 +297,10 @@ trait WithCache
      *
      * @return Collection
      */
-    public function findWhereIn(string $column, array $where, array $columns = ['*']): Collection
+    public function findWhereIn(string $column, array $where, array|string $columns = '*'): Collection
     {
         if ($this->skipCache || !$this->cacheActive()) {
-            return parent::findWhereIn($columns, $where, $columns);
+            return parent::findWhereIn($column, $where, $columns);
         }
 
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
@@ -321,7 +324,7 @@ trait WithCache
      *
      * @return Collection
      */
-    public function findWhereNotIn(string $column, array $where, array $columns = ['*']): Collection
+    public function findWhereNotIn(string $column, array $where, array|string $columns = '*'): Collection
     {
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::findWhereNotIn($column, $where, $columns);
@@ -401,13 +404,13 @@ trait WithCache
      * Paginate results.
      *
      * @param null   $perPage
-     * @param array  $columns
+     * @param array|string  $columns
      * @param string $pageName
      * @param null   $page
      *
-     * @return mixed
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate($perPage = null, $columns = '*', $pageName = 'page', $page = null)
     {
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::paginate($perPage, $columns, $pageName, $page);
@@ -456,7 +459,7 @@ trait WithCache
     /**
      * Count results.
      *
-     * @param array $columns
+     * @param array|string $columns
      *
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
