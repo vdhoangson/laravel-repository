@@ -230,7 +230,7 @@ abstract class BaseRepository implements BaseInterface
                     $c instanceof BaseCriteriaInterface
                     && $c instanceof BaseCriteria
                 ) {
-                    $this->entity = $c->apply($this->getEntity());
+                    $this->query = $c->apply($this->getQuery());
                 }
             }
         }
