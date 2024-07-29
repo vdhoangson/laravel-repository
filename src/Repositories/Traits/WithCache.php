@@ -64,11 +64,11 @@ trait WithCache
     /**
      * Manually set user tag.
      *
-     * @param int $tag
+     * @param int|string $tag
      *
      * @return BaseInterface
      */
-    public function setUserTag(int $tag): BaseInterface
+    public function setUserTag(int|string $tag): BaseInterface
     {
         $this->userTag = $tag;
 
@@ -513,8 +513,7 @@ trait WithCache
     /**
      * Try to get actual authenticated user ID.
      *
-     * @return int
-     *
+     * @return string
      */
     private function getTag(): string
     {
