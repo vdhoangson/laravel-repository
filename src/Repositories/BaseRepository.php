@@ -639,7 +639,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $results = $this->getQuery()->whereNotIn($column, $where)->get($columns);
+        $results = $this->query->whereNotIn($column, $where)->get($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -662,7 +662,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $results = $this->getQuery()->where($field, '=', $value)->get($columns);
+        $results = $this->query->where($field, '=', $value)->get($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -688,7 +688,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $results = $this->getQuery()->select($columns)->chunk($limit, $callback);
+        $results = $this->query->select($columns)->chunk($limit, $callback);
 
         $this->resetQuery();
         $this->resetScope();
@@ -712,7 +712,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $result = $this->getQuery()->count($columns);
+        $result = $this->query->count($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -732,7 +732,7 @@ abstract class BaseRepository implements BaseInterface
         $this->applyCriteria();
         $this->applyScope();
 
-        $result = $this->getQuery()->sum($column);
+        $result = $this->query->sum($column);
 
         $this->resetQuery();
         $this->resetScope();
@@ -782,7 +782,7 @@ abstract class BaseRepository implements BaseInterface
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->getQuery()->simplePaginate($perPage, $columns, $pageName, $page);
+        $results = $this->query->simplePaginate($perPage, $columns, $pageName, $page);
 
         $this->resetQuery();
         $this->resetScope();
@@ -797,7 +797,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function withTrashed(): BaseInterface
     {
-        $this->entity = $this->getQuery()->withTrashed();
+        $this->query = $this->query->withTrashed();
 
         return $this;
     }
@@ -809,7 +809,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function onlyTrashed(): BaseInterface
     {
-        $this->entity = $this->getQuery()->onlyTrashed();
+        $this->query = $this->query->onlyTrashed();
 
         return $this;
     }
@@ -827,7 +827,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getQuery()->has($relation, $operator, $count, $boolean, $callback);
+        $this->query = $this->query->has($relation, $operator, $count, $boolean, $callback);
 
         return $this;
     }
@@ -843,7 +843,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orHas($relation, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getQuery()->orHas($relation, $operator, $count);
+        $this->query = $this->query->orHas($relation, $operator, $count);
 
         return $this;
     }
@@ -859,7 +859,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function doesntHave($relation, $boolean = 'and', Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getQuery()->doesntHave($relation, $boolean, $callback);
+        $this->query = $this->query->doesntHave($relation, $boolean, $callback);
 
         return $this;
     }
@@ -873,7 +873,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orDoesntHave($relation): BaseInterface
     {
-        $this->entity = $this->getQuery()->orDoesntHave($relation);
+        $this->query = $this->query->orDoesntHave($relation);
 
         return $this;
     }
@@ -890,7 +890,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getQuery()->whereHas($relation, $callback, $operator, $count);
+        $this->query = $this->query->whereHas($relation, $callback, $operator, $count);
 
         return $this;
     }
@@ -907,7 +907,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getQuery()->orWhereHas($relation, $callback, $operator, $count);
+        $this->query = $this->query->orWhereHas($relation, $callback, $operator, $count);
 
         return $this;
     }
@@ -922,7 +922,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function whereDoesntHave($relation, Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getQuery()->whereDoesntHave($relation, $callback);
+        $this->query = $this->query->whereDoesntHave($relation, $callback);
 
         return $this;
     }
@@ -937,7 +937,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orWhereDoesntHave($relation, Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getQuery()->orWhereDoesntHave($relation, $callback);
+        $this->query = $this->query->orWhereDoesntHave($relation, $callback);
 
         return $this;
     }
@@ -956,7 +956,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getEntity()->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
+        $this->query = $this->query->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
 
         return $this;
     }
@@ -973,7 +973,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orHasMorph($relation, $types, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getEntity()->orHasMorph($relation, $types, $operator, $count);
+        $this->query = $this->query->orHasMorph($relation, $types, $operator, $count);
 
         return $this;
     }
@@ -990,7 +990,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getEntity()->doesntHaveMorph($relation, $types, $boolean, $callback);
+        $this->query = $this->query->doesntHaveMorph($relation, $types, $boolean, $callback);
 
         return $this;
     }
@@ -1005,7 +1005,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orDoesntHaveMorph($relation, $types): BaseInterface
     {
-        $this->entity = $this->getEntity()->orDoesntHaveMorph($relation, $types);
+        $this->query = $this->query->orDoesntHaveMorph($relation, $types);
 
         return $this;
     }
@@ -1023,7 +1023,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getEntity()->whereHasMorph($relation, $types, $callback, $operator, $count);
+        $this->query = $this->query->whereHasMorph($relation, $types, $callback, $operator, $count);
 
         return $this;
     }
@@ -1041,7 +1041,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getEntity()->orWhereHasMorph($relation, $types, $callback, $operator, $count);
+        $this->query = $this->query->orWhereHasMorph($relation, $types, $callback, $operator, $count);
 
         return $this;
     }
@@ -1057,7 +1057,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function whereDoesntHaveMorph($relation, $types, Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getEntity()->whereDoesntHaveMorph($relation, $types, $callback);
+        $this->query = $this->query->whereDoesntHaveMorph($relation, $types, $callback);
 
         return $this;
     }
@@ -1073,7 +1073,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getEntity()->orWhereDoesntHaveMorph($relation, $types, $callback);
+        $this->query = $this->query->orWhereDoesntHaveMorph($relation, $types, $callback);
 
         return $this;
     }
@@ -1087,7 +1087,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function withCount($relations): BaseInterface
     {
-        $this->entity = $this->getEntity()->withCount($relations);
+        $this->query = $this->query->withCount($relations);
 
         return $this;
     }
