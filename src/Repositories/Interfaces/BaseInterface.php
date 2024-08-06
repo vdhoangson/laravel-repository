@@ -372,13 +372,10 @@ interface BaseInterface
     /**
      * Paginate results.
      *
-     * @param int|null $perPage
-     * @param array|string    $columns
-     * @param string   $pageName
-     * @param int|null $page
-     *
-     * @throws BindingResolutionException
-     * @throws RepositoryEntityException
+     * @param int|null   $perPage
+     * @param array|string  $columns
+     * @param string $pageName
+     * @param int|null   $page
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */

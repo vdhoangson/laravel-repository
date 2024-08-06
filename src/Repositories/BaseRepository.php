@@ -639,7 +639,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $results = $this->getEntity()->whereNotIn($column, $where)->get($columns);
+        $results = $this->getQuery()->whereNotIn($column, $where)->get($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -662,7 +662,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $results = $this->getEntity()->where($field, '=', $value)->get($columns);
+        $results = $this->getQuery()->where($field, '=', $value)->get($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -688,7 +688,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $results = $this->getEntity()->select($columns)->chunk($limit, $callback);
+        $results = $this->getQuery()->select($columns)->chunk($limit, $callback);
 
         $this->resetQuery();
         $this->resetScope();
@@ -712,7 +712,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $result = $this->getEntity()->count($columns);
+        $result = $this->getQuery()->count($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -732,7 +732,7 @@ abstract class BaseRepository implements BaseInterface
         $this->applyCriteria();
         $this->applyScope();
 
-        $result = $this->getEntity()->sum($column);
+        $result = $this->getQuery()->sum($column);
 
         $this->resetQuery();
         $this->resetScope();
@@ -743,16 +743,12 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Paginate results.
      *
-     * @param int|null $perPage
+     * @param int|null   $perPage
      * @param array|string  $columns
-     * @param string   $pageName
-     * @param int|null $page
-     *
-     * @throws BindingResolutionException
-     * @throws RepositoryEntityException
+     * @param string $pageName
+     * @param int|null   $page
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     *
      */
     public function paginate($perPage = null, $columns = '*', $pageName = 'page', $page = null)
     {
@@ -786,7 +782,7 @@ abstract class BaseRepository implements BaseInterface
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->getEntity()->simplePaginate($perPage, $columns, $pageName, $page);
+        $results = $this->getQuery()->simplePaginate($perPage, $columns, $pageName, $page);
 
         $this->resetQuery();
         $this->resetScope();
@@ -801,7 +797,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function withTrashed(): BaseInterface
     {
-        $this->entity = $this->getEntity()->withTrashed();
+        $this->entity = $this->getQuery()->withTrashed();
 
         return $this;
     }
@@ -813,7 +809,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function onlyTrashed(): BaseInterface
     {
-        $this->entity = $this->getEntity()->onlyTrashed();
+        $this->entity = $this->getQuery()->onlyTrashed();
 
         return $this;
     }
@@ -831,7 +827,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getEntity()->has($relation, $operator, $count, $boolean, $callback);
+        $this->entity = $this->getQuery()->has($relation, $operator, $count, $boolean, $callback);
 
         return $this;
     }
@@ -847,7 +843,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orHas($relation, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getEntity()->orHas($relation, $operator, $count);
+        $this->entity = $this->getQuery()->orHas($relation, $operator, $count);
 
         return $this;
     }
@@ -863,7 +859,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function doesntHave($relation, $boolean = 'and', Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getEntity()->doesntHave($relation, $boolean, $callback);
+        $this->entity = $this->getQuery()->doesntHave($relation, $boolean, $callback);
 
         return $this;
     }
@@ -877,7 +873,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orDoesntHave($relation): BaseInterface
     {
-        $this->entity = $this->getEntity()->orDoesntHave($relation);
+        $this->entity = $this->getQuery()->orDoesntHave($relation);
 
         return $this;
     }
@@ -894,7 +890,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getEntity()->whereHas($relation, $callback, $operator, $count);
+        $this->entity = $this->getQuery()->whereHas($relation, $callback, $operator, $count);
 
         return $this;
     }
@@ -911,7 +907,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
     {
-        $this->entity = $this->getEntity()->orWhereHas($relation, $callback, $operator, $count);
+        $this->entity = $this->getQuery()->orWhereHas($relation, $callback, $operator, $count);
 
         return $this;
     }
@@ -926,7 +922,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function whereDoesntHave($relation, Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getEntity()->whereDoesntHave($relation, $callback);
+        $this->entity = $this->getQuery()->whereDoesntHave($relation, $callback);
 
         return $this;
     }
@@ -941,7 +937,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public function orWhereDoesntHave($relation, Closure $callback = null): BaseInterface
     {
-        $this->entity = $this->getEntity()->orWhereDoesntHave($relation, $callback);
+        $this->entity = $this->getQuery()->orWhereDoesntHave($relation, $callback);
 
         return $this;
     }

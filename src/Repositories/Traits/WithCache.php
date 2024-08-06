@@ -423,10 +423,10 @@ trait WithCache
     /**
      * Paginate results.
      *
-     * @param null   $perPage
+     * @param int|null   $perPage
      * @param array|string  $columns
      * @param string $pageName
-     * @param null   $page
+     * @param int|null   $page
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
