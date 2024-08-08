@@ -394,6 +394,7 @@ abstract class BaseRepository implements BaseInterface
     {
         $result = $this->entity->create($parameters);
 
+        $this->resetEntity();
         $this->resetQuery();
 
         return $result;
@@ -412,10 +413,12 @@ abstract class BaseRepository implements BaseInterface
      */
     public function updateOrCreate(array $where = [], array $values = [])
     {
-        $this->entity = $this->entity->updateOrCreate($where, $values);
+        $this->entity = $this->query->updateOrCreate($where, $values);
 
         $results = $this->getEntity();
 
+        $this->resetScope();
+        $this->resetEntity();
         $this->resetQuery();
 
         return $results;
@@ -439,6 +442,7 @@ abstract class BaseRepository implements BaseInterface
         $model->save();
 
         $this->resetScope();
+        $this->resetEntity();
         $this->resetQuery();
 
         return $model;
@@ -458,6 +462,7 @@ abstract class BaseRepository implements BaseInterface
         $result = $this->query->findOrFail($id);
         $result->delete();
 
+        $this->resetEntity();
         $this->resetQuery();
 
         return $this;
@@ -477,6 +482,7 @@ abstract class BaseRepository implements BaseInterface
     {
         $results = $this->query->firstOrNew($where);
 
+        $this->resetEntity();
         $this->resetQuery();
 
         return $results;
