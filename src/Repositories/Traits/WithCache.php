@@ -37,6 +37,8 @@ trait WithCache
      */
     protected $userTag = null;
 
+    protected $cacheKey = null;
+
     /**
      * Skip cache.
      *
@@ -90,11 +92,47 @@ trait WithCache
     /**
      * Clear cache.
      *
+     * If cache key is provided, clear only that cache.
+     * If not, clear all cache for this repository.
+     *
+     * @param string|null $cacheKey
      * @return $this|BaseInterface
      */
-    public function clearCache(): BaseInterface
+    public function clearCache($cacheKey = null): BaseInterface
     {
+        if ($cacheKey) {
+            Cache::forget($cacheKey);
+            return $this;
+        }
+
         Cache::tags([$this->getTag()])->flush();
+
+        return $this;
+    }
+
+    /**
+     * Get cache key.
+     *
+     * @param string $method
+     * @param array  $parameters
+     *
+     * @return string
+     */
+    protected function getCacheKey(string $method, array $parameters): string
+    {
+        return $this->cacheKey ?? $this->generateCacheKey($method, $parameters);
+    }
+
+    /**
+     * Set cache key.
+     *
+     * @param string $cacheKey
+     *
+     * @return BaseInterface
+     */
+    protected function setCacheKey(string $cacheKey): BaseInterface
+    {
+        $this->cacheKey = $cacheKey;
 
         return $this;
     }
@@ -107,7 +145,7 @@ trait WithCache
      *
      * @return string
      */
-    protected function getCacheKey(string $method, array $parameters): string
+    protected function generateCacheKey(string $method, array $parameters): string
     {
         // Get actual repository class name.
         $className = get_class($this);
@@ -116,13 +154,15 @@ trait WithCache
         $criteria = $this->getSerializedCriteria();
         $query = $this->getSerializedQuery();
 
-        return sprintf(
+        $this->cacheKey = sprintf(
             '%s@%s_%s-%s',
             $method,
             $className,
             $this->getTag(),
             md5(serialize($parameters) . $criteria . $query)
         );
+
+        return $this->cacheKey;
     }
 
     /**
