@@ -178,8 +178,6 @@ trait WithCache
             return parent::all($columns);
         }
 
-        $this->applyParentQuery();
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
         // Store or get from cache.
@@ -204,8 +202,6 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::get($columns);
         }
-
-        $this->applyParentQuery();
 
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
@@ -232,8 +228,6 @@ trait WithCache
             return parent::first($columns);
         }
 
-        $this->applyParentQuery();
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
         // Store or get from cache.
@@ -258,8 +252,6 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::firstOrNew($where);
         }
-
-        $this->applyParentQuery();
 
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
@@ -290,8 +282,6 @@ trait WithCache
             return parent::findWhere($conditions, $columns);
         }
 
-        $this->applyParentQuery();
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
         // Store or get from cache.
@@ -319,8 +309,6 @@ trait WithCache
             return parent::findWhereIn($column, $where, $columns);
         }
 
-        $this->applyParentQuery();
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
         // Store or get from cache.
@@ -347,8 +335,6 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::findWhereNotIn($column, $where, $columns);
         }
-
-        $this->applyParentQuery();
 
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
@@ -436,8 +422,6 @@ trait WithCache
             return parent::paginate($perPage, $columns, $pageName, $page);
         }
 
-        $this->applyParentQuery();
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
         // Store or get from cache.
@@ -465,8 +449,6 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::simplePaginate($perPage, $columns, $pageName, $page);
         }
-
-        $this->applyParentQuery();
 
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
@@ -496,8 +478,6 @@ trait WithCache
             return parent::count($columns);
         }
 
-        $this->applyParentQuery();
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
         // Store or get from cache.
@@ -523,8 +503,6 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::sum($column);
         }
-
-        $this->applyParentQuery();
 
         $cacheKey = $this->getCacheKey(__FUNCTION__, func_get_args());
 
@@ -591,11 +569,5 @@ trait WithCache
     private function getCacheGuards(): array
     {
         return config('laravel-repository.repository.cache.guards', []);
-    }
-
-    protected function applyParentQuery()
-    {
-        parent::applyCriteria();
-        parent::applyScope();
     }
 }
