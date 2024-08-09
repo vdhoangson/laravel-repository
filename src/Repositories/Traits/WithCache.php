@@ -178,7 +178,7 @@ trait WithCache
             return parent::all($columns);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -203,7 +203,7 @@ trait WithCache
             return parent::get($columns);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -228,7 +228,7 @@ trait WithCache
             return parent::first($columns);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -253,7 +253,7 @@ trait WithCache
             return parent::firstOrNew($where);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -282,7 +282,7 @@ trait WithCache
             return parent::findWhere($conditions, $columns);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -309,7 +309,7 @@ trait WithCache
             return parent::findWhereIn($column, $where, $columns);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -336,7 +336,7 @@ trait WithCache
             return parent::findWhereNotIn($column, $where, $columns);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -422,7 +422,7 @@ trait WithCache
             return parent::paginate($perPage, $columns, $pageName, $page);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -450,7 +450,7 @@ trait WithCache
             return parent::simplePaginate($perPage, $columns, $pageName, $page);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -478,7 +478,7 @@ trait WithCache
             return parent::count($columns);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
@@ -504,7 +504,7 @@ trait WithCache
             return parent::sum($column);
         }
 
-        $cacheKey = $this->getCacheKey(__FUNCTION__, parent::getQuery());
+        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
 
         // Store or get from cache.
         return Cache::tags([$this->getTag()])->remember(
