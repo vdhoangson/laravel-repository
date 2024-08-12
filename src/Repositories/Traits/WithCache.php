@@ -101,7 +101,7 @@ trait WithCache
     public function clearCache($cacheKey = null): BaseInterface
     {
         if ($cacheKey) {
-            Cache::forget($cacheKey);
+            Cache::tags([$this->getTag()])->forget($cacheKey);
             return $this;
         }
 
