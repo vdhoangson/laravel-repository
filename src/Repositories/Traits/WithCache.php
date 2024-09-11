@@ -24,11 +24,11 @@ trait WithCache
     protected $skipCache = false;
 
     /**
-     * Determine if skipp auth user tag.
+     * Determine if use auth user tag.
      *
      * @var bool
      */
-    protected $skipUserTag = false;
+    protected $useUserTag = false;
 
     /**
      * User ID for cache key.
@@ -52,13 +52,13 @@ trait WithCache
     }
 
     /**
-     * Skip auth user tag.
+     * Use auth user tag.
      *
      * @return BaseInterface
      */
-    public function skipUserTag(): BaseInterface
+    public function useUserTag(): BaseInterface
     {
-        $this->skipUserTag = true;
+        $this->useUserTag = true;
 
         return $this;
     }
@@ -563,18 +563,16 @@ trait WithCache
      */
     private function getTag(): string
     {
-        if ($this->skipUserTag) {
-            return class_basename($this) . '_0';
-        }
-
         // If user tag was set manually, user it.
         if ($this->userTag !== null) {
             return class_basename($this) . '_' . $this->userTag;
         }
 
-        foreach ($this->getCacheGuards() as $guard) {
-            if (auth($guard)->check()) {
-                return class_basename($this) . '_' . auth($guard)->user()->getAuthIdentifier();
+        if ($this->useUserTag) {
+            foreach ($this->getCacheGuards() as $guard) {
+                if (auth($guard)->check()) {
+                    return class_basename($this) . '_' . auth($guard)->user()->getAuthIdentifier();
+                }
             }
         }
 

@@ -148,40 +148,6 @@ You can user criteria with this functions, and results will be cached.
 Repository automatically flush cache, when method create(), updateOrCreate(), update(),
 delete() is call.
 
-##### Tag by user ID
-
-By default repository cache adding actual authenticated user ID as tag. That provide
-possibility to separate cached data among users. That feature is useful for entities
-strictly associated to User (i.e. Account operation, Account details), when cached
-data will be flushed for each user separately - not for all repository, with save
-resources.
-
-But for other entities (.i.e. Articles in CMS system), this solution can be annoying,
-so to disable this feature for selected repository call skipUserTag() method in \_\_construct(). Example:
-
-```php
-class ExampleRepository extends BaseRepository implements ExampleRepositoryInterface
-{
-    use WithCache;
-
-    /**
-     * ExampleRepository constructor.
-     *
-     * @param Container $app
-     * @throws RepositoryEntityException
-     * @throws BindingResolutionException
-     */
-    public function __construct(Container $app)
-    {
-        parent::__construct($app);
-        $this->skipUserTag();
-    }
-}
-```
-
-In some situation (i.e. in Jobs or Commands) you may want to manually update user data, and flush tagged cache for him.
-You can use setUserTag () function to manually set user ID for cache tag. To clear it use clearUserTag() function.
-
 ##### Skipping cache
 
 To force fetch data from database, skipping cached data, use skipCache() method. Example:
