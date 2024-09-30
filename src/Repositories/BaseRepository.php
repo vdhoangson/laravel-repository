@@ -325,7 +325,7 @@ abstract class BaseRepository implements BaseInterface
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->entity->all($columns);
+        $results = $this->query->all($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -348,7 +348,7 @@ abstract class BaseRepository implements BaseInterface
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->entity->get($columns);
+        $results = $this->query->get($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -372,7 +372,7 @@ abstract class BaseRepository implements BaseInterface
 
         $this->applyScope();
 
-        $results = $this->entity->first($columns);
+        $results = $this->query->first($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -642,7 +642,6 @@ abstract class BaseRepository implements BaseInterface
     public function findWhereNotIn(string $column, array $where, array|string $columns = '*'): Collection|array
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
         $results = $this->query->whereNotIn($column, $where)->get($columns);
@@ -715,7 +714,6 @@ abstract class BaseRepository implements BaseInterface
     public function count(string|null $columns = '*'): int
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
         $result = $this->query->count($columns);
