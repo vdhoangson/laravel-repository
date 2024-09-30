@@ -2,7 +2,7 @@
   "name": "vdhoangson/laravel-repository",
   "description": "Repository pattern package for Laravel framework",
   "type": "library",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "keywords": [
     "vdhoangson",
     "laravel-repository",

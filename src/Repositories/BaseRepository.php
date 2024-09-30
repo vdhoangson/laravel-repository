@@ -325,7 +325,7 @@ abstract class BaseRepository implements BaseInterface
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->query->all($columns);
+        $results = $this->entity->all($columns);
 
         $this->resetQuery();
         $this->resetScope();
