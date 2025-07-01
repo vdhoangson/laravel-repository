@@ -1,6 +1,6 @@
 <?php
 
-namespace Vdhoangson\LaravelRepository\Repositories\Interfaces;
+namespace Vdhoangson\LaravelRepository\Contracts;
 
 use Closure;
 use Exception;
@@ -8,20 +8,20 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Vdhoangson\LaravelRepository\Repositories\Exceptions\RepositoryEntityException;
-use Vdhoangson\LaravelRepository\Repositories\Criteria\Interfaces\BaseCriteriaInterface;
+use Vdhoangson\LaravelRepository\Contracts\BaseCriteriaInterface;
+use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
 /**
- * Interface BaseInterface.
+ * Interface RepositoryInterface.
  * */
-interface BaseInterface
+interface RepositoryInterface
 {
     /**
      * Model entity class that will be use in repository.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function entity(): string;
+    public function entity();
 
     /**
      * Make new entity instance.
@@ -29,9 +29,9 @@ interface BaseInterface
      * @throws RepositoryEntityException
      * @throws BindingResolutionException
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function makeEntity(): self;
+    public function makeEntity();
 
     /**
      * Get entity instance.
@@ -40,16 +40,7 @@ interface BaseInterface
      */
     public function getEntity();
 
-    /**
-     * Set entity instance.
-     *
-     * @param Model|Builder $entity
-     *
-     * @return BaseInterface
-     */
-    public function setEntity($entity): self;
-
-    public function setQuery(Builder $query): void;
+    public function setQuery(Builder $query);
 
     public function getQuery(): Builder;
 
@@ -58,9 +49,9 @@ interface BaseInterface
      *
      * @param BaseCriteriaInterface|string $criteria
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function pushCriteria($criteria): self;
+    public function pushCriteria($criteria);
 
     /**
      * Pop criteria.
@@ -70,9 +61,9 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function popCriteria($criteria): self;
+    public function popCriteria($criteria);
 
     /**
      * Get criteria.
@@ -84,18 +75,18 @@ interface BaseInterface
     /**
      * Apply criteria to eloquent query.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function applyCriteria(): self;
+    public function applyCriteria();
 
     /**
      * Skip using criteria.
      *
      * @param bool $skip
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function skipCriteria(bool $skip): self;
+    public function skipCriteria(bool $skip);
 
     /**
      * Clear criteria array.
@@ -103,9 +94,9 @@ interface BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function clearCriteria(): self;
+    public function clearCriteria();
 
     /**
      * Query Scope
@@ -114,21 +105,21 @@ interface BaseInterface
      *
      * @return $this
      */
-    public function scopeQuery(Closure $scope): self;
+    public function scopeQuery(Closure $scope);
 
     /**
      * Apply scope in current Query
      *
      * @return $this
      */
-    public function applyScope(): self;
+    public function applyScope();
 
     /**
      * Reset Query Scope
      *
      * @return $this
      */
-    public function resetScope(): self;
+    public function resetScope();
 
     /**
      * Return eloquent collection of all records of entity
@@ -212,9 +203,9 @@ interface BaseInterface
      *
      * @throws Exception
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function delete(int $id): self;
+    public function delete(int $id);
 
     /**
      * Get first entity record or new entity instance.
@@ -234,39 +225,39 @@ interface BaseInterface
      * @param string $column
      * @param string $direction
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orderBy(string $column, string $direction = 'asc'): self;
+    public function orderBy(string $column, string $direction = 'asc');
 
     /**
      * Relation sub-query.
      *
      * @param array|string $relations
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function with(array|string $relations): self;
+    public function with(array|string $relations);
 
     /**
      * Begin database transaction.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function transactionBegin(): self;
+    public function transactionBegin();
 
     /**
      * Commit database transaction.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function transactionCommit(): self;
+    public function transactionCommit();
 
     /**
      * Rollback transaction.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function transactionRollback(): self;
+    public function transactionRollback();
 
     /**
      * Find by ID.
@@ -399,16 +390,16 @@ interface BaseInterface
     /**
      * Get records with trashed entities.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function withTrashed(): self;
+    public function withTrashed();
 
     /**
      * Get only trashed entities.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function onlyTrashed(): self;
+    public function onlyTrashed();
 
     /**
      * Has relation.
@@ -419,9 +410,9 @@ interface BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): self;
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null);
 
     /**
      * Or hase relation.
@@ -430,9 +421,9 @@ interface BaseInterface
      * @param string $operator
      * @param int    $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orHas($relation, $operator = '>=', $count = 1): self;
+    public function orHas($relation, $operator = '>=', $count = 1);
 
     /**
      * Add a relationship count / exists condition to the query.
@@ -441,18 +432,18 @@ interface BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function doesntHave($relation, $boolean = 'and', Closure $callback = null): self;
+    public function doesntHave($relation, $boolean = 'and', Closure $callback = null);
 
     /**
      * Add a relationship count / exists condition to the query with an "or".
      *
      * @param $relation
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orDoesntHave($relation): self;
+    public function orDoesntHave($relation);
 
     /**
      * Where has relation.
@@ -462,9 +453,9 @@ interface BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): self;
+    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
      * Or where has relation.
@@ -474,9 +465,9 @@ interface BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): self;
+    public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
      * Where doesnt have relation.
@@ -484,9 +475,9 @@ interface BaseInterface
      * @param string       $relation
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function whereDoesntHave($relation, Closure $callback = null): self;
+    public function whereDoesntHave($relation, Closure $callback = null);
 
     /**
      * Or where doesnt have relation.
@@ -494,9 +485,9 @@ interface BaseInterface
      * @param string       $relation
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orWhereDoesntHave($relation, Closure $callback = null): self;
+    public function orWhereDoesntHave($relation, Closure $callback = null);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query.
@@ -508,9 +499,9 @@ interface BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): self;
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with an "or".
@@ -520,9 +511,9 @@ interface BaseInterface
      * @param string $operator
      * @param int    $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orHasMorph($relation, $types, $operator = '>=', $count = 1): self;
+    public function orHasMorph($relation, $types, $operator = '>=', $count = 1);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query.
@@ -532,9 +523,9 @@ interface BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null): self;
+    public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with an "or".
@@ -542,9 +533,9 @@ interface BaseInterface
      * @param $relation
      * @param $types
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orDoesntHaveMorph($relation, $types): self;
+    public function orDoesntHaveMorph($relation, $types);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
@@ -555,9 +546,9 @@ interface BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): self;
+    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
@@ -568,9 +559,9 @@ interface BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): self;
+    public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
@@ -579,9 +570,9 @@ interface BaseInterface
      * @param $types
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function whereDoesntHaveMorph($relation, $types, Closure $callback = null): self;
+    public function whereDoesntHaveMorph($relation, $types, Closure $callback = null);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
@@ -590,16 +581,16 @@ interface BaseInterface
      * @param $types
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null): self;
+    public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null);
 
     /**
      * Count given relation.
      *
      * @param string|array $relations
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function withCount($relations): self;
+    public function withCount($relations);
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Vdhoangson\LaravelRepository\Repositories\Exceptions;
+namespace Vdhoangson\LaravelRepository\Exceptions;
 
 use Throwable;
 

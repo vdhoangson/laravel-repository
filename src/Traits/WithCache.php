@@ -1,14 +1,14 @@
 <?php
 
-namespace Vdhoangson\LaravelRepository\Repositories\Traits;
+namespace Vdhoangson\LaravelRepository\Traits;
 
 use ReflectionObject;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use Vdhoangson\LaravelRepository\Interfaces\BaseInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Vdhoangson\LaravelRepository\Repositories\Interfaces\BaseInterface;
-use Vdhoangson\LaravelRepository\Repositories\Exceptions\RepositoryEntityException;
+use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
 /**
  * Trait WithCache.
@@ -586,7 +586,7 @@ trait WithCache
      */
     private function cacheActive(): bool
     {
-        return config('laravel-repository.repository.cache.active', false);
+        return config('laravel-repository.cache.active', false);
     }
 
     /**
@@ -596,7 +596,7 @@ trait WithCache
      */
     private function getCacheTime(): int
     {
-        return (int) config('laravel-repository.repository.cache.time', 3600);
+        return (int) config('laravel-repository.cache.time', 3600);
     }
 
     /**
@@ -606,6 +606,6 @@ trait WithCache
      */
     private function getCacheGuards(): array
     {
-        return config('laravel-repository.repository.cache.guards', []);
+        return config('laravel-repository.cache.guards', []);
     }
 }
