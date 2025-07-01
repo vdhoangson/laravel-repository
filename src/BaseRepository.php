@@ -1,39 +1,24 @@
 <?php
 
-namespace Vdhoangson\LaravelRepository\Repositories;
+namespace Vdhoangson\LaravelRepository;
 
 use Closure;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Vdhoangson\LaravelRepository\Contracts\RepositoryInterface;
+use Vdhoangson\LaravelRepository\Contracts\BaseCriteriaInterface;
 use Vdhoangson\LaravelRepository\Repositories\Criteria\BaseCriteria;
-use Vdhoangson\LaravelRepository\Repositories\Interfaces\BaseInterface;
-use Vdhoangson\LaravelRepository\Repositories\Exceptions\RepositoryEntityException;
-use Vdhoangson\LaravelRepository\Repositories\Criteria\Interfaces\BaseCriteriaInterface;
+use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
 /**
  * Class BaseRepository.
  * */
-abstract class BaseRepository implements BaseInterface
+abstract class BaseRepository extends AbtractRepository implements RepositoryInterface
 {
-    /**
-     * Application container.
-     *
-     * @var Container
-     */
-    public $app;
-
-    /**
-     * Entity class that will be use in repository.
-     *
-     * @var Model
-     */
-    protected Model $entity;
-
     /**
      * @var Builder
      */
@@ -58,72 +43,7 @@ abstract class BaseRepository implements BaseInterface
      */
     public $scopeQuery = null;
 
-    /**
-     * BaseRepository constructor.
-     *
-     * @param Container $app
-     *
-     * @throws RepositoryEntityException
-     * @throws BindingResolutionException
-     */
-    public function __construct(Container $app)
-    {
-        $this->app = $app;
-        $this->criteria = new Collection();
-        $this->makeEntity();
-    }
-
-    abstract public function entity(): string;
-
-    /**
-     * Make new entity instance.
-     *
-     * @throws RepositoryEntityException
-     * @throws BindingResolutionException
-     *
-     * @return BaseInterface
-     */
-    public function makeEntity(): BaseInterface
-    {
-        // Make new model instance.
-        $entity = $this->app->make($this->entity());
-
-        // Checking instance.
-        if (!$entity instanceof Model) {
-            throw new RepositoryEntityException($this->entity());
-        }
-
-        $this->entity = $entity;
-        $this->query = $this->entity->newQuery();
-
-        return $this;
-    }
-
-    /**
-     * Get entity instance.
-     *
-     * @return Model|Builder
-     */
-    public function getEntity()
-    {
-        return $this->entity;
-    }
-
-    /**
-     * Set entity instance.
-     *
-     * @param Model|Builder $entity
-     *
-     * @return BaseInterface
-     */
-    public function setEntity($entity): BaseInterface
-    {
-        $this->entity = $entity;
-
-        return $this;
-    }
-
-    public function setQuery(Builder $query): void
+    public function setQuery(Builder $query)
     {
         $this->query = $query;
     }
@@ -146,29 +66,19 @@ abstract class BaseRepository implements BaseInterface
     }
 
     /**
-     * Reset entity instance.
-     *
-     * @return void
-     */
-    public function resetEntity(): void
-    {
-        $this->makeEntity();
-    }
-
-    /**
      * Push criteria.
      *
      * @param BaseCriteriaInterface|string $criteria
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function pushCriteria($criteria): BaseInterface
+    public function pushCriteria($criteria): RepositoryInterface
     {
         if (is_string($criteria)) {
             $criteria = new $criteria();
         }
         if (!$criteria instanceof BaseCriteriaInterface) {
-            throw new \Exception('Class ' . get_class($criteria) . ' must be an instance of Vdhoangson\\LaravelRepository\\Repositories\\Criteria\\Interfaces\\BaseCriteriaInterface');
+            throw new \Exception('Class ' . get_class($criteria) . ' must be an instance of Vdhoangson\\LaravelRepository\\Contracts\\BaseCriteriaInterface');
         }
         $this->criteria->push($criteria);
 
@@ -183,9 +93,9 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function popCriteria($criteria): BaseInterface
+    public function popCriteria($criteria): RepositoryInterface
     {
         $this->criteria = $this->criteria->reject(function ($item) use ($criteria) {
             if (is_object($item) && is_string($criteria)) {
@@ -214,10 +124,11 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Apply criteria to eloquent query.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function applyCriteria(): BaseInterface
+    public function applyCriteria(): RepositoryInterface
     {
+        // Skip criteria
         if ($this->skipCriteria === true) {
             return $this;
         }
@@ -243,9 +154,9 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param bool $skip
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function skipCriteria(bool $skip): BaseInterface
+    public function skipCriteria(bool $skip): RepositoryInterface
     {
         $this->skipCriteria = $skip;
 
@@ -258,9 +169,9 @@ abstract class BaseRepository implements BaseInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function clearCriteria(): BaseInterface
+    public function clearCriteria(): RepositoryInterface
     {
         $this->criteria = new Collection();
         $this->makeEntity();
@@ -275,7 +186,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @return $this
      */
-    public function scopeQuery(Closure $scope): BaseInterface
+    public function scopeQuery(Closure $scope): RepositoryInterface
     {
         $this->scopeQuery = $scope;
 
@@ -287,7 +198,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @return $this
      */
-    public function applyScope(): BaseInterface
+    public function applyScope(): RepositoryInterface
     {
         if (isset($this->scopeQuery) && is_callable($this->scopeQuery)) {
             $callback = $this->scopeQuery;
@@ -302,7 +213,7 @@ abstract class BaseRepository implements BaseInterface
      *
      * @return $this
      */
-    public function resetScope(): BaseInterface
+    public function resetScope(): RepositoryInterface
     {
         $this->scopeQuery = null;
 
@@ -348,7 +259,7 @@ abstract class BaseRepository implements BaseInterface
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->query->get($columns);
+        $results = $this->entity->get($columns);
 
         $this->resetQuery();
         $this->resetScope();
@@ -455,9 +366,9 @@ abstract class BaseRepository implements BaseInterface
      *
      * @throws Exception
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function delete(int $id): BaseInterface
+    public function delete(int $id): RepositoryInterface
     {
         $result = $this->query->findOrFail($id);
         $result->delete();
@@ -494,9 +405,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string $column
      * @param string $direction
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orderBy(string $column, string $direction = 'asc'): BaseInterface
+    public function orderBy(string $column, string $direction = 'asc'): RepositoryInterface
     {
         $this->query = $this->query->orderBy($column, $direction);
 
@@ -508,9 +419,9 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param array|string $relations
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function with(array|string $relations): BaseInterface
+    public function with(array|string $relations): RepositoryInterface
     {
         $this->query = $this->query->with($relations);
 
@@ -520,9 +431,9 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Begin database transaction.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function transactionBegin(): BaseInterface
+    public function transactionBegin(): RepositoryInterface
     {
         DB::beginTransaction();
 
@@ -532,9 +443,9 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Commit database transaction.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function transactionCommit(): BaseInterface
+    public function transactionCommit(): RepositoryInterface
     {
         DB::commit();
 
@@ -544,9 +455,9 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Rollback transaction.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function transactionRollback(): BaseInterface
+    public function transactionRollback(): RepositoryInterface
     {
         DB::rollBack();
 
@@ -797,9 +708,9 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Get records with trashed entities.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function withTrashed(): BaseInterface
+    public function withTrashed(): RepositoryInterface
     {
         $this->query = $this->query->withTrashed();
 
@@ -809,9 +720,9 @@ abstract class BaseRepository implements BaseInterface
     /**
      * Get only trashed entities.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function onlyTrashed(): BaseInterface
+    public function onlyTrashed(): RepositoryInterface
     {
         $this->query = $this->query->onlyTrashed();
 
@@ -827,9 +738,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): BaseInterface
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): RepositoryInterface
     {
         $this->query = $this->query->has($relation, $operator, $count, $boolean, $callback);
 
@@ -843,9 +754,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string $operator
      * @param int    $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orHas($relation, $operator = '>=', $count = 1): BaseInterface
+    public function orHas($relation, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->query = $this->query->orHas($relation, $operator, $count);
 
@@ -859,9 +770,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function doesntHave($relation, $boolean = 'and', Closure $callback = null): BaseInterface
+    public function doesntHave($relation, $boolean = 'and', Closure $callback = null): RepositoryInterface
     {
         $this->query = $this->query->doesntHave($relation, $boolean, $callback);
 
@@ -873,9 +784,9 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param $relation
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orDoesntHave($relation): BaseInterface
+    public function orDoesntHave($relation): RepositoryInterface
     {
         $this->query = $this->query->orDoesntHave($relation);
 
@@ -890,9 +801,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
+    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->query = $this->query->whereHas($relation, $callback, $operator, $count);
 
@@ -907,9 +818,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
+    public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->query = $this->query->orWhereHas($relation, $callback, $operator, $count);
 
@@ -922,9 +833,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $relation
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function whereDoesntHave($relation, Closure $callback = null): BaseInterface
+    public function whereDoesntHave($relation, Closure $callback = null): RepositoryInterface
     {
         $this->query = $this->query->whereDoesntHave($relation, $callback);
 
@@ -937,9 +848,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $relation
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orWhereDoesntHave($relation, Closure $callback = null): BaseInterface
+    public function orWhereDoesntHave($relation, Closure $callback = null): RepositoryInterface
     {
         $this->query = $this->query->orWhereDoesntHave($relation, $callback);
 
@@ -956,9 +867,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): BaseInterface
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): RepositoryInterface
     {
         $this->query = $this->query->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
 
@@ -973,9 +884,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string $operator
      * @param int    $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orHasMorph($relation, $types, $operator = '>=', $count = 1): BaseInterface
+    public function orHasMorph($relation, $types, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->query = $this->query->orHasMorph($relation, $types, $operator, $count);
 
@@ -990,9 +901,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $boolean
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null): BaseInterface
+    public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null): RepositoryInterface
     {
         $this->query = $this->query->doesntHaveMorph($relation, $types, $boolean, $callback);
 
@@ -1005,9 +916,9 @@ abstract class BaseRepository implements BaseInterface
      * @param $relation
      * @param $types
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orDoesntHaveMorph($relation, $types): BaseInterface
+    public function orDoesntHaveMorph($relation, $types): RepositoryInterface
     {
         $this->query = $this->query->orDoesntHaveMorph($relation, $types);
 
@@ -1023,9 +934,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
+    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->query = $this->query->whereHasMorph($relation, $types, $callback, $operator, $count);
 
@@ -1041,9 +952,9 @@ abstract class BaseRepository implements BaseInterface
      * @param string       $operator
      * @param int          $count
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): BaseInterface
+    public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->query = $this->query->orWhereHasMorph($relation, $types, $callback, $operator, $count);
 
@@ -1057,9 +968,9 @@ abstract class BaseRepository implements BaseInterface
      * @param $types
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function whereDoesntHaveMorph($relation, $types, Closure $callback = null): BaseInterface
+    public function whereDoesntHaveMorph($relation, $types, Closure $callback = null): RepositoryInterface
     {
         $this->query = $this->query->whereDoesntHaveMorph($relation, $types, $callback);
 
@@ -1073,9 +984,9 @@ abstract class BaseRepository implements BaseInterface
      * @param $types
      * @param Closure|null $callback
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null): BaseInterface
+    public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null): RepositoryInterface
     {
         $this->query = $this->query->orWhereDoesntHaveMorph($relation, $types, $callback);
 
@@ -1087,9 +998,9 @@ abstract class BaseRepository implements BaseInterface
      *
      * @param string|array $relations
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function withCount($relations): BaseInterface
+    public function withCount($relations): RepositoryInterface
     {
         $this->query = $this->query->withCount($relations);
 

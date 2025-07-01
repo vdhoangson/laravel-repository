@@ -6,6 +6,7 @@ Repository pattern package for Laravel framework.
 ![GitHub](https://img.shields.io/github/license/vdhoangson/laravel-repository?label=License)
 ![Packagist](https://img.shields.io/packagist/dt/vdhoangson/laravel-repository?label=Downloads)
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/vdhoangson/laravel-repository?label=PHP)
+![Tests](https://github.com/vdhoangson/laravel-repository/workflows/Tests/badge.svg)
 
 ### Version compatibility
 
@@ -13,8 +14,14 @@ Repository pattern package for Laravel framework.
 
 | Framework | Package | Note                |
 | :-------- | :------ | :------------------ |
-| 9.x.x     | ^1.x.x  | PHP ^8.0 Supported. |
-| 10.x.x    | ^1.x.x  | PHP ^8.1 Supported. |
+| 10.x.x    | ^2.x.x  | PHP ^8.2 Supported. |
+| 11.x.x    | ^2.x.x  | PHP ^8.2 Supported. |
+| 12.x.x    | ^2.x.x  | PHP ^8.2 Supported. |
+
+## Requirements
+
+- PHP 8.3 or higher
+- Laravel 10.x or higher
 
 ## Installation
 
@@ -23,6 +30,10 @@ You can install this package by composer:
     composer require vdhoangson/laravel-repository
 
 For more configuration, you can publish configuration file:
+
+    php artisan vendor:publish --tag=laravel-repository-config
+
+Or using the provider:
 
     php artisan vendor:publish --provider "Vdhoangson\LaravelRepository\Providers\LaravelRepositoryServiceProvider"
 
