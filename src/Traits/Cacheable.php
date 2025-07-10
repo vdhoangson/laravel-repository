@@ -5,16 +5,15 @@ namespace Vdhoangson\LaravelRepository\Traits;
 use ReflectionObject;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Database\Eloquent\Model;
-use Vdhoangson\LaravelRepository\Interfaces\BaseInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Vdhoangson\LaravelRepository\Contracts\RepositoryInterface;
 use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
 /**
- * Trait WithCache.
+ * Trait Cacheable.
  *
  */
-trait WithCache
+trait Cacheable
 {
     /**
      * Determine if cache will be skipped in query.
@@ -42,9 +41,9 @@ trait WithCache
     /**
      * Skip cache.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function skipCache(): BaseInterface
+    public function skipCache(): RepositoryInterface
     {
         $this->skipCache = true;
 
@@ -54,9 +53,9 @@ trait WithCache
     /**
      * Use auth user tag.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function useUserTag(): BaseInterface
+    public function useUserTag(): RepositoryInterface
     {
         $this->useUserTag = true;
 
@@ -68,9 +67,9 @@ trait WithCache
      *
      * @param int|string $tag
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function setUserTag(int|string $tag): BaseInterface
+    public function setUserTag(int|string $tag): RepositoryInterface
     {
         $this->userTag = $tag;
 
@@ -80,9 +79,9 @@ trait WithCache
     /**
      * Clear manually set user tag.
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function clearUserTag(): BaseInterface
+    public function clearUserTag(): RepositoryInterface
     {
         $this->userTag = null;
 
@@ -96,17 +95,25 @@ trait WithCache
      * If not, clear all cache for this repository.
      *
      * @param string|null $cacheKey
-     * @return $this|BaseInterface
+     * @return $this|RepositoryInterface
      */
-    public function clearCache($cacheKey = null): BaseInterface
+    public function clearCache($cacheKey = null): RepositoryInterface
     {
+        $unsupported = ['file', 'database'];
+        $driver = Cache::getDefaultDriver();
         if ($cacheKey) {
-            Cache::tags([$this->getTag()])->forget($cacheKey);
+            if (in_array($driver, $unsupported, true)) {
+                Cache::store($driver)->forget($cacheKey);
+            } else {
+                Cache::tags([$this->getTag()])->forget($cacheKey);
+            }
             return $this;
         }
-
-        Cache::tags([$this->getTag()])->flush();
-
+        if (in_array($driver, $unsupported, true)) {
+            Cache::store($driver)->flush();
+        } else {
+            Cache::tags([$this->getTag()])->flush();
+        }
         return $this;
     }
 
@@ -128,9 +135,9 @@ trait WithCache
      *
      * @param string $cacheKey
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    protected function setCacheKey(string $cacheKey): BaseInterface
+    protected function setCacheKey(string $cacheKey): RepositoryInterface
     {
         $this->cacheKey = $cacheKey;
 
@@ -217,11 +224,8 @@ trait WithCache
         if ($this->skipCache) {
             return parent::all($columns);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($columns) {
@@ -242,65 +246,12 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::get($columns);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($columns) {
                 return parent::get($columns);
-            }
-        );
-    }
-
-    /**
-     * Get first record.
-     *
-     * @param array|string $columns
-     *
-     * @return Model|null
-     */
-    public function first(array|string $columns = '*')
-    {
-        if ($this->skipCache || !$this->cacheActive()) {
-            return parent::first($columns);
-        }
-
-        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
-            $cacheKey,
-            $this->getCacheTime(),
-            function () use ($columns) {
-                return parent::first($columns);
-            }
-        );
-    }
-
-    /**
-     * Get first entity record or new entity instance.
-     *
-     * @param array $where
-     *
-     * @return mixed
-     */
-    public function firstOrNew(array $where)
-    {
-        if ($this->skipCache || !$this->cacheActive()) {
-            return parent::firstOrNew($where);
-        }
-
-        $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
-            $cacheKey,
-            $this->getCacheTime(),
-            function () use ($where) {
-                return parent::firstOrNew($where);
             }
         );
     }
@@ -321,11 +272,8 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::findWhere($conditions, $columns);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($conditions, $columns) {
@@ -348,11 +296,8 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::findWhereIn($column, $where, $columns);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($column, $where, $columns) {
@@ -375,11 +320,8 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::findWhereNotIn($column, $where, $columns);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($column, $where, $columns) {
@@ -437,9 +379,9 @@ trait WithCache
      *
      * @param int $id
      *
-     * @return BaseInterface
+     * @return RepositoryInterface
      */
-    public function delete(int $id): BaseInterface
+    public function delete(int $id): RepositoryInterface
     {
         $this->clearCache();
 
@@ -456,16 +398,13 @@ trait WithCache
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = null, $columns = '*', $pageName = 'page', $page = null)
+    public function paginate(?int $perPage = null, $columns = '*', $pageName = 'page', ?int $page = null)
     {
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::paginate($perPage, $columns, $pageName, $page);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($perPage, $columns, $pageName, $page) {
@@ -477,10 +416,10 @@ trait WithCache
     /**
      * Paginate results (simple).
      *
-     * @param null   $perPage
+     * @param int|null   $perPage
      * @param array  $columns
      * @param string $pageName
-     * @param null   $page
+     * @param int|null   $page
      *
      * @return mixed
      */
@@ -489,11 +428,8 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::simplePaginate($perPage, $columns, $pageName, $page);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($perPage, $columns, $pageName, $page) {
@@ -517,11 +453,8 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::count($columns);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($columns) {
@@ -543,11 +476,8 @@ trait WithCache
         if ($this->skipCache || !$this->cacheActive()) {
             return parent::sum($column);
         }
-
         $cacheKey = $this->getCacheKey(__FUNCTION__, request()->all());
-
-        // Store or get from cache.
-        return Cache::tags([$this->getTag()])->remember(
+        return $this->getCacheStore()->remember(
             $cacheKey,
             $this->getCacheTime(),
             function () use ($column) {
@@ -607,5 +537,30 @@ trait WithCache
     private function getCacheGuards(): array
     {
         return config('laravel-repository.cache.guards', []);
+    }
+
+    /**
+     * Get cache repository, with or without tags depending on driver.
+     *
+     * @return \Illuminate\Contracts\Cache\Repository|\Illuminate\Cache\TaggedCache
+     */
+    protected function getCacheStore()
+    {
+        $unsupported = ['file', 'database'];
+        $driver = Cache::getDefaultDriver();
+        if (in_array($driver, $unsupported, true)) {
+            return Cache::store($driver);
+        }
+        return Cache::tags([$this->getTag()]);
+    }
+
+    /**
+     * Check if current cache driver supports tags.
+     *
+     * @deprecated No longer throws exception, logic is handled in getCacheStore().
+     */
+    protected function ensureCacheDriverSupportsTags(): void
+    {
+        // No-op
     }
 }

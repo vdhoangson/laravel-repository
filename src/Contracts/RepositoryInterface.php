@@ -317,12 +317,12 @@ interface RepositoryInterface
      * Find data by field and value
      *
      * @param       $field
-     * @param       $value
+     * @param mixed $value
      * @param array|string $columns
      *
      * @return Collection|array
      */
-    public function findByField($field, $value = null, $columns = ['*']): Collection|array;
+    public function findByField($field, mixed $value = null, $columns = ['*']): Collection|array;
 
     /**
      * Chunk query results.
@@ -370,7 +370,7 @@ interface RepositoryInterface
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = null, $columns = '*', $pageName = 'page', $page = null);
+    public function paginate(?int $perPage = null, $columns = '*', $pageName = 'page', ?int $page = null);
 
     /**
      * Paginate results (simple).
@@ -385,7 +385,7 @@ interface RepositoryInterface
      *
      * @return mixed
      */
-    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+    public function simplePaginate(?int $perPage = null, $columns = ['*'], $pageName = 'page', ?int $page = null);
 
     /**
      * Get records with trashed entities.
