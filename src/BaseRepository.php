@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Vdhoangson\LaravelRepository\Contracts\RepositoryInterface;
 use Vdhoangson\LaravelRepository\Contracts\BaseCriteriaInterface;
-use Vdhoangson\LaravelRepository\Repositories\Criteria\BaseCriteria;
+use Vdhoangson\LaravelRepository\Criteria\BaseCriteria;
 use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
 /**
@@ -68,7 +68,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
     /**
      * Push criteria.
      *
-     * @param BaseCriteriaInterface|string $criteria
+     * @param BaseCriteria|string $criteria
      *
      * @return RepositoryInterface
      */
@@ -77,8 +77,8 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         if (is_string($criteria)) {
             $criteria = new $criteria();
         }
-        if (!$criteria instanceof BaseCriteriaInterface) {
-            throw new \Exception('Class ' . get_class($criteria) . ' must be an instance of Vdhoangson\\LaravelRepository\\Contracts\\BaseCriteriaInterface');
+        if (!$criteria instanceof BaseCriteria) {
+            throw new \Exception('Class ' . get_class($criteria) . ' must be an instance of Vdhoangson\LaravelRepository\Criteria\BaseCriteria');
         }
         $this->criteria->push($criteria);
 
