@@ -1,7 +1,7 @@
 <?php
 /**
  * DateRangeCriteria
- * 
+ *
  * @package Vdhoangson\LaravelRepository\Criteria
  * @author vdhoangson <vdhoangson@gmail.com>
  * @link https://github.com/vdhoangson/laravel-repository
@@ -10,7 +10,6 @@ namespace Vdhoangson\LaravelRepository\Criteria;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
 
 /**
  * Class DateRangeCriteria.
@@ -21,16 +20,16 @@ class DateRangeCriteria extends BaseCriteria
     /**
      * Date from.
      *
-     * @var Carbon
+     * @var string
      */
-    protected ?Carbon $dateFrom;
+    protected ?string $dateFrom;
 
     /**
      * Date to.
      *
-     * @var Carbon
+     * @var string
      */
-    protected ?Carbon $dateTo;
+    protected ?string $dateTo;
 
     /**
      * Column name to search.
@@ -59,11 +58,11 @@ class DateRangeCriteria extends BaseCriteria
     /**
      * Apply criteria on entity.
      *
-     * @param Model|Builder $entity
+     * @param $entity
      *
      * @return Model|Builder
      */
-    public function apply(Model|Builder $entity): Model|Builder
+    public function apply($entity): Model|Builder
     {
         if ($this->dateFrom === null) {
             $entity->whereDate($this->column, '<=', $this->dateTo);

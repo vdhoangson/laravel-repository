@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Vdhoangson\LaravelRepository\Contracts\RepositoryInterface;
-use Vdhoangson\LaravelRepository\Contracts\BaseCriteriaInterface;
 use Vdhoangson\LaravelRepository\Criteria\BaseCriteria;
 use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
@@ -50,8 +49,8 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
     public function getQuery(): Builder
     {
-        if (!isset($this->query)) {
-            $this->query = $this->getEntity()->newQuery();
+        if (!$this->query) {
+            $this->query = $this->entity->newQuery();
         }
 
         return $this->query;
@@ -137,44 +136,11 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         if ($criteria instanceof Collection) {
             foreach ($criteria as $c) {
-                if (
-                    $c instanceof BaseCriteriaInterface
-                    && $c instanceof BaseCriteria
-                ) {
-                    $this->query = $c->apply($this->getQuery());
+                if ($c instanceof BaseCriteria) {
+                    $this->entity = $c->apply($this->entity);
                 }
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * Skip using criteria.
-     *
-     * @param bool $skip
-     *
-     * @return RepositoryInterface
-     */
-    public function skipCriteria(bool $skip): RepositoryInterface
-    {
-        $this->skipCriteria = $skip;
-
-        return $this;
-    }
-
-    /**
-     * Clear criteria array.
-     *
-     * @throws BindingResolutionException
-     * @throws RepositoryEntityException
-     *
-     * @return RepositoryInterface
-     */
-    public function clearCriteria(): RepositoryInterface
-    {
-        $this->criteria = new Collection();
-        $this->makeEntity();
 
         return $this;
     }
@@ -283,9 +249,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->applyScope();
 
-        $results = $this->query->first($columns);
+        $results = $this->entity->first($columns);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $results;
@@ -324,9 +290,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function updateOrCreate(array $where = [], array $values = [])
     {
-        $this->entity = $this->query->updateOrCreate($where, $values);
+        $this->entity = $this->entity->updateOrCreate($where, $values);
 
-        $results = $this->getEntity();
+        $results = $this->entity;
 
         $this->resetScope();
         $this->resetEntity();
@@ -348,13 +314,12 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function update(int $id, array $attributes = [])
     {
-        $model = $this->query->findOrFail($id);
+        $model = $this->entity->findOrFail($id);
         $model->fill($attributes);
         $model->save();
 
         $this->resetScope();
         $this->resetEntity();
-        $this->resetQuery();
 
         return $model;
     }
@@ -370,11 +335,10 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function delete(int $id): RepositoryInterface
     {
-        $result = $this->query->findOrFail($id);
+        $result = $this->entity->findOrFail($id);
         $result->delete();
 
         $this->resetEntity();
-        $this->resetQuery();
 
         return $this;
     }
@@ -391,10 +355,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function firstOrNew(array $where)
     {
-        $results = $this->query->firstOrNew($where);
+        $results = $this->entity->firstOrNew($where);
 
         $this->resetEntity();
-        $this->resetQuery();
 
         return $results;
     }
@@ -409,7 +372,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orderBy(string $column, string $direction = 'asc'): RepositoryInterface
     {
-        $this->query = $this->query->orderBy($column, $direction);
+        $this->entity = $this->entity->orderBy($column, $direction);
 
         return $this;
     }
@@ -423,7 +386,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function with(array|string $relations): RepositoryInterface
     {
-        $this->query = $this->query->with($relations);
+        $this->entity = $this->entity->with($relations);
 
         return $this;
     }
@@ -480,9 +443,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         $this->applyCriteria();
         $this->applyScope();
 
-        $result = $this->query->where(['id' => $id])->first($columns);
+        $result = $this->entity->where(['id' => $id])->first($columns);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $result;
@@ -497,17 +460,17 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return Collection
+     * @return Collection|null
      */
     public function findWhere(array|string $conditions, array|string $columns = '*'): Collection
     {
         $this->applyCriteria();
         $this->applyScope();
         $this->applyConditions($conditions);
+        \Log::info($this->entity->toRawSql(), $this->getCriteria()->toArray());
+        $results = $this->entity->get($columns);
 
-        $results = $this->query->get($columns);
-
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $results;
@@ -530,9 +493,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->query->whereIn($column, $where)->get($columns);
+        $results = $this->entity->whereIn($column, $where)->get($columns);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $results;
@@ -555,9 +518,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->query->whereNotIn($column, $where)->get($columns);
+        $results = $this->entity->whereNotIn($column, $where)->get($columns);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $results;
@@ -578,9 +541,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->applyScope();
 
-        $results = $this->query->where($field, '=', $value)->get($columns);
+        $results = $this->entity->where($field, '=', $value)->get($columns);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $results;
@@ -604,9 +567,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->applyScope();
 
-        $results = $this->query->select($columns)->chunk($limit, $callback);
+        $results = $this->entity->select($columns)->chunk($limit, $callback);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $results;
@@ -627,9 +590,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         $this->applyCriteria();
         $this->applyScope();
 
-        $result = $this->query->count($columns);
+        $result = $this->entity->count($columns);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $result;
@@ -647,9 +610,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         $this->applyCriteria();
         $this->applyScope();
 
-        $result = $this->query->sum($column);
+        $result = $this->entity->sum($column);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $result;
@@ -670,10 +633,10 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->query->paginate($perPage, $columns, $pageName, $page);
+        $results = $this->entity->paginate($perPage, $columns, $pageName, $page);
         $results->appends(app('request')->query());
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $results;
@@ -697,9 +660,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         $this->applyCriteria();
         $this->applyScope();
 
-        $results = $this->query->simplePaginate($perPage, $columns, $pageName, $page);
+        $results = $this->entity->simplePaginate($perPage, $columns, $pageName, $page);
 
-        $this->resetQuery();
+        $this->resetEntity();
         $this->resetScope();
 
         return $results;
@@ -712,7 +675,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function withTrashed(): RepositoryInterface
     {
-        $this->query = $this->query->withTrashed();
+        $this->entity = $this->entity->withTrashed();
 
         return $this;
     }
@@ -724,7 +687,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function onlyTrashed(): RepositoryInterface
     {
-        $this->query = $this->query->onlyTrashed();
+        $this->entity = $this->entity->onlyTrashed();
 
         return $this;
     }
@@ -742,7 +705,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): RepositoryInterface
     {
-        $this->query = $this->query->has($relation, $operator, $count, $boolean, $callback);
+        $this->entity = $this->entity->has($relation, $operator, $count, $boolean, $callback);
 
         return $this;
     }
@@ -758,13 +721,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orHas($relation, $operator = '>=', $count = 1): RepositoryInterface
     {
-        $this->query = $this->query->orHas($relation, $operator, $count);
+        $this->entity = $this->entity->orHas($relation, $operator, $count);
 
         return $this;
     }
 
     /**
-     * Add a relationship count / exists condition to the query.
+     * Add a relationship count / exists condition to the entity.
      *
      * @param $relation
      * @param string       $boolean
@@ -774,13 +737,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function doesntHave($relation, $boolean = 'and', Closure $callback = null): RepositoryInterface
     {
-        $this->query = $this->query->doesntHave($relation, $boolean, $callback);
+        $this->entity = $this->entity->doesntHave($relation, $boolean, $callback);
 
         return $this;
     }
 
     /**
-     * Add a relationship count / exists condition to the query with an "or".
+     * Add a relationship count / exists condition to the entity with an "or".
      *
      * @param $relation
      *
@@ -788,7 +751,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orDoesntHave($relation): RepositoryInterface
     {
-        $this->query = $this->query->orDoesntHave($relation);
+        $this->entity = $this->entity->orDoesntHave($relation);
 
         return $this;
     }
@@ -805,7 +768,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
-        $this->query = $this->query->whereHas($relation, $callback, $operator, $count);
+        $this->entity = $this->entity->whereHas($relation, $callback, $operator, $count);
 
         return $this;
     }
@@ -822,7 +785,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
-        $this->query = $this->query->orWhereHas($relation, $callback, $operator, $count);
+        $this->entity = $this->entity->orWhereHas($relation, $callback, $operator, $count);
 
         return $this;
     }
@@ -837,7 +800,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function whereDoesntHave($relation, Closure $callback = null): RepositoryInterface
     {
-        $this->query = $this->query->whereDoesntHave($relation, $callback);
+        $this->entity = $this->entity->whereDoesntHave($relation, $callback);
 
         return $this;
     }
@@ -852,13 +815,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orWhereDoesntHave($relation, Closure $callback = null): RepositoryInterface
     {
-        $this->query = $this->query->orWhereDoesntHave($relation, $callback);
+        $this->entity = $this->entity->orWhereDoesntHave($relation, $callback);
 
         return $this;
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query.
+     * Add a polymorphic relationship count / exists condition to the entity.
      *
      * @param $relation
      * @param $types
@@ -871,13 +834,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): RepositoryInterface
     {
-        $this->query = $this->query->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
+        $this->entity = $this->entity->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
 
         return $this;
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     * Add a polymorphic relationship count / exists condition to the entity with an "or".
      *
      * @param $relation
      * @param $types
@@ -888,13 +851,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orHasMorph($relation, $types, $operator = '>=', $count = 1): RepositoryInterface
     {
-        $this->query = $this->query->orHasMorph($relation, $types, $operator, $count);
+        $this->entity = $this->entity->orHasMorph($relation, $types, $operator, $count);
 
         return $this;
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query.
+     * Add a polymorphic relationship count / exists condition to the entity.
      *
      * @param $relation
      * @param $types
@@ -905,13 +868,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null): RepositoryInterface
     {
-        $this->query = $this->query->doesntHaveMorph($relation, $types, $boolean, $callback);
+        $this->entity = $this->entity->doesntHaveMorph($relation, $types, $boolean, $callback);
 
         return $this;
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     * Add a polymorphic relationship count / exists condition to the entity with an "or".
      *
      * @param $relation
      * @param $types
@@ -920,13 +883,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orDoesntHaveMorph($relation, $types): RepositoryInterface
     {
-        $this->query = $this->query->orDoesntHaveMorph($relation, $types);
+        $this->entity = $this->entity->orDoesntHaveMorph($relation, $types);
 
         return $this;
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query with where clauses.
+     * Add a polymorphic relationship count / exists condition to the entity with where clauses.
      *
      * @param $relation
      * @param $types
@@ -938,13 +901,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
-        $this->query = $this->query->whereHasMorph($relation, $types, $callback, $operator, $count);
+        $this->entity = $this->entity->whereHasMorph($relation, $types, $callback, $operator, $count);
 
         return $this;
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
+     * Add a polymorphic relationship count / exists condition to the entity with where clauses and an "or".
      *
      * @param $relation
      * @param $types
@@ -956,13 +919,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
-        $this->query = $this->query->orWhereHasMorph($relation, $types, $callback, $operator, $count);
+        $this->entity = $this->entity->orWhereHasMorph($relation, $types, $callback, $operator, $count);
 
         return $this;
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query with where clauses.
+     * Add a polymorphic relationship count / exists condition to the entity with where clauses.
      *
      * @param $relation
      * @param $types
@@ -972,13 +935,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function whereDoesntHaveMorph($relation, $types, Closure $callback = null): RepositoryInterface
     {
-        $this->query = $this->query->whereDoesntHaveMorph($relation, $types, $callback);
+        $this->entity = $this->entity->whereDoesntHaveMorph($relation, $types, $callback);
 
         return $this;
     }
 
     /**
-     * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
+     * Add a polymorphic relationship count / exists condition to the entity with where clauses and an "or".
      *
      * @param $relation
      * @param $types
@@ -988,7 +951,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null): RepositoryInterface
     {
-        $this->query = $this->query->orWhereDoesntHaveMorph($relation, $types, $callback);
+        $this->entity = $this->entity->orWhereDoesntHaveMorph($relation, $types, $callback);
 
         return $this;
     }
@@ -1002,7 +965,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      */
     public function withCount($relations): RepositoryInterface
     {
-        $this->query = $this->query->withCount($relations);
+        $this->entity = $this->entity->withCount($relations);
 
         return $this;
     }
@@ -1019,9 +982,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         foreach ($where as $attribute => $value) {
             if (is_array($value)) {
                 list($attribute, $condition, $val) = $value;
-                $this->query = $this->query->where($attribute, $condition, $val);
+                $this->query = $this->entity->where($attribute, $condition, $val);
             } else {
-                $this->query = $this->query->where($attribute, '=', $value);
+                $this->query = $this->entity->where($attribute, '=', $value);
             }
         }
     }

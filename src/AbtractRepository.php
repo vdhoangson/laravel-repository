@@ -5,12 +5,16 @@ namespace Vdhoangson\LaravelRepository;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Vdhoangson\LaravelRepository\Contracts\RepositoryInterface;
 use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
 abstract class AbtractRepository
 {
-    public $app;
+    public Container $app;
 
+    /**
+     * @var Model
+     */
     protected $entity;
 
     protected $searchable = [];
@@ -53,7 +57,6 @@ abstract class AbtractRepository
         }
 
         $this->entity = $model;
-        $this->query = $this->entity->newQuery();
 
         return $model;
     }
@@ -94,5 +97,35 @@ abstract class AbtractRepository
     public function resetEntity(): void
     {
         $this->makeEntity();
+    }
+
+    /**
+     * Skip using criteria.
+     *
+     * @param bool $skip
+     *
+     * @return RepositoryInterface
+     */
+    public function skipCriteria(bool $skip): RepositoryInterface
+    {
+        $this->skipCriteria = $skip;
+
+        return $this;
+    }
+
+    /**
+     * Clear criteria array.
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws RepositoryEntityException
+     *
+     * @return RepositoryInterface
+     */
+    public function clearCriteria(): RepositoryInterface
+    {
+        $this->criteria = new Collection();
+        $this->makeEntity();
+
+        return $this;
     }
 }
