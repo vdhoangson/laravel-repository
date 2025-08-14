@@ -2,11 +2,11 @@
 /**
  * EqualsCriteria
  * 
- * @package Vdhoangson\LaravelRepository\Repositories\Criteria
+ * @package Vdhoangson\LaravelRepository\Criteria
  * @author vdhoangson <vdhoangson@gmail.com>
  * @link https://github.com/vdhoangson/laravel-repository
  */
-namespace Vdhoangson\LaravelRepository\Repositories\Criteria;
+namespace Vdhoangson\LaravelRepository\Criteria;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
