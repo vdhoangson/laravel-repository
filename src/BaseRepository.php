@@ -982,9 +982,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         foreach ($where as $attribute => $value) {
             if (is_array($value)) {
                 list($attribute, $condition, $val) = $value;
-                $this->entity->where($attribute, $condition, $val);
+                $this->entity = $this->entity->where($attribute, $condition, $val);
             } else {
-                $this->entity->where($attribute, '=', $value);
+                $this->entity = $this->entity->where($attribute, '=', $value);
             }
         }
     }
