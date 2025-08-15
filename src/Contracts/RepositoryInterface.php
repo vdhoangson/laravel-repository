@@ -268,7 +268,7 @@ interface RepositoryInterface
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return TFirstDefault|TValue
+     * @return Model|null
      */
     public function findById(int $id, array|string $columns = '*');
 

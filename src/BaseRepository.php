@@ -168,7 +168,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
     {
         if (isset($this->scopeQuery) && is_callable($this->scopeQuery)) {
             $callback = $this->scopeQuery;
-            $this->query = $callback($this->getQuery());
+            $this->entity = $callback($this->getEntity());
         }
 
         return $this;
@@ -436,7 +436,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      * @throws BindingResolutionException
      * @throws RepositoryEntityException
      *
-     * @return TFirstDefault|TValue
+     * @return Model|null
      */
     public function findById(int $id, array|string $columns = '*')
     {
@@ -467,7 +467,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         $this->applyCriteria();
         $this->applyScope();
         $this->applyConditions($conditions);
-        \Log::info($this->entity->toRawSql(), $this->getCriteria()->toArray());
+
         $results = $this->entity->get($columns);
 
         $this->resetEntity();
@@ -982,9 +982,9 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
         foreach ($where as $attribute => $value) {
             if (is_array($value)) {
                 list($attribute, $condition, $val) = $value;
-                $this->query = $this->entity->where($attribute, $condition, $val);
+                $this->entity->where($attribute, $condition, $val);
             } else {
-                $this->query = $this->entity->where($attribute, '=', $value);
+                $this->entity->where($attribute, '=', $value);
             }
         }
     }
