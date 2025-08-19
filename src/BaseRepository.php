@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Vdhoangson\LaravelRepository\Contracts\RepositoryInterface;
-use Vdhoangson\LaravelRepository\Criteria\BaseCriteria;
 use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
 /**
@@ -22,20 +21,6 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      * @var Builder
      */
     protected $query;
-
-    /**
-     * Criteria collection.
-     *
-     * @var Collection
-     */
-    public $criteria;
-
-    /**
-     * Determine if criteria will be skipped in query.
-     *
-     * @var bool
-     */
-    public $skipCriteria = false;
 
     /**
      * @var \Closure
@@ -62,87 +47,6 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
     public function resetQuery()
     {
         return $this->query = $this->entity->newQuery();
-    }
-
-    /**
-     * Push criteria.
-     *
-     * @param BaseCriteria|string $criteria
-     *
-     * @return RepositoryInterface
-     */
-    public function pushCriteria($criteria): RepositoryInterface
-    {
-        if (is_string($criteria)) {
-            $criteria = new $criteria();
-        }
-        if (!$criteria instanceof BaseCriteria) {
-            throw new \Exception('Class ' . get_class($criteria) . ' must be an instance of Vdhoangson\LaravelRepository\Criteria\BaseCriteria');
-        }
-        $this->criteria->push($criteria);
-
-        return $this;
-    }
-
-    /**
-     * Pop criteria.
-     *
-     * @param  $criteria
-     *
-     * @throws BindingResolutionException
-     * @throws RepositoryEntityException
-     *
-     * @return RepositoryInterface
-     */
-    public function popCriteria($criteria): RepositoryInterface
-    {
-        $this->criteria = $this->criteria->reject(function ($item) use ($criteria) {
-            if (is_object($item) && is_string($criteria)) {
-                return get_class($item) === $criteria;
-            }
-            if (is_string($item) && is_object($criteria)) {
-                return $item === get_class($criteria);
-            }
-
-            return get_class($item) === get_class($criteria);
-        });
-
-        return $this;
-    }
-
-    /**
-     * Get criteria.
-     *
-     * @return Collection|null
-     */
-    public function getCriteria(): Collection|null
-    {
-        return $this->criteria;
-    }
-
-    /**
-     * Apply criteria to eloquent query.
-     *
-     * @return RepositoryInterface
-     */
-    public function applyCriteria(): RepositoryInterface
-    {
-        // Skip criteria
-        if ($this->skipCriteria === true) {
-            return $this;
-        }
-
-        $criteria = $this->getCriteria();
-
-        if ($criteria instanceof Collection) {
-            foreach ($criteria as $c) {
-                if ($c instanceof BaseCriteria) {
-                    $this->entity = $c->apply($this->entity);
-                }
-            }
-        }
-
-        return $this;
     }
 
     /**

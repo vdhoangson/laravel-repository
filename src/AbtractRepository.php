@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Vdhoangson\LaravelRepository\Contracts\RepositoryInterface;
 use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
+use Vdhoangson\LaravelRepository\Traits\Criteria;
 
 abstract class AbtractRepository
 {
+    use Criteria;
+
     public Container $app;
 
     /**
@@ -96,6 +99,7 @@ abstract class AbtractRepository
      */
     public function resetEntity(): void
     {
+        $this->clearCriteria();
         $this->makeEntity();
     }
 

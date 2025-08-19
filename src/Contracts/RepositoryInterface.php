@@ -8,7 +8,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Vdhoangson\LaravelRepository\Contracts\BaseCriteriaInterface;
 use Vdhoangson\LaravelRepository\Exceptions\RepositoryEntityException;
 
 /**
@@ -43,60 +42,6 @@ interface RepositoryInterface
     public function setQuery(Builder $query);
 
     public function getQuery(): Builder;
-
-    /**
-     * Push criteria.
-     *
-     * @param BaseCriteriaInterface|string $criteria
-     *
-     * @return RepositoryInterface
-     */
-    public function pushCriteria($criteria);
-
-    /**
-     * Pop criteria.
-     *
-     * @param  $criteria
-     *
-     * @throws BindingResolutionException
-     * @throws RepositoryEntityException
-     *
-     * @return RepositoryInterface
-     */
-    public function popCriteria($criteria);
-
-    /**
-     * Get criteria.
-     *
-     * @return Collection|null
-     */
-    public function getCriteria(): Collection|null;
-
-    /**
-     * Apply criteria to eloquent query.
-     *
-     * @return RepositoryInterface
-     */
-    public function applyCriteria();
-
-    /**
-     * Skip using criteria.
-     *
-     * @param bool $skip
-     *
-     * @return RepositoryInterface
-     */
-    public function skipCriteria(bool $skip);
-
-    /**
-     * Clear criteria array.
-     *
-     * @throws BindingResolutionException
-     * @throws RepositoryEntityException
-     *
-     * @return RepositoryInterface
-     */
-    public function clearCriteria();
 
     /**
      * Query Scope

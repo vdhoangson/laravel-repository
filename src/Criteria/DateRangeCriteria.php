@@ -65,12 +65,12 @@ class DateRangeCriteria extends BaseCriteria
     public function apply($entity): Model|Builder
     {
         if ($this->dateFrom === null) {
-            $entity->whereDate($this->column, '<=', $this->dateTo);
+            $entity = $entity->whereDate($this->column, '<=', $this->dateTo);
         } else {
             if ($this->dateTo === null) {
-                $entity->whereDate($this->column, '>=', $this->dateFrom);
+                $entity = $entity->whereDate($this->column, '>=', $this->dateFrom);
             } else {
-                $entity->whereBetween($this->column, [$this->dateFrom, $this->dateTo]);
+                $entity = $entity->whereBetween($this->column, [$this->dateFrom, $this->dateTo]);
             }
         }
 
