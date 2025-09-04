@@ -607,7 +607,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): RepositoryInterface
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null): RepositoryInterface
     {
         $this->entity = $this->entity->has($relation, $operator, $count, $boolean, $callback);
 
@@ -639,7 +639,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function doesntHave($relation, $boolean = 'and', Closure $callback = null): RepositoryInterface
+    public function doesntHave($relation, $boolean = 'and', ?Closure $callback = null): RepositoryInterface
     {
         $this->entity = $this->entity->doesntHave($relation, $boolean, $callback);
 
@@ -670,7 +670,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
+    public function whereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->entity = $this->entity->whereHas($relation, $callback, $operator, $count);
 
@@ -687,7 +687,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
+    public function orWhereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->entity = $this->entity->orWhereHas($relation, $callback, $operator, $count);
 
@@ -702,7 +702,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function whereDoesntHave($relation, Closure $callback = null): RepositoryInterface
+    public function whereDoesntHave($relation, ?Closure $callback = null): RepositoryInterface
     {
         $this->entity = $this->entity->whereDoesntHave($relation, $callback);
 
@@ -717,7 +717,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function orWhereDoesntHave($relation, Closure $callback = null): RepositoryInterface
+    public function orWhereDoesntHave($relation, ?Closure $callback = null): RepositoryInterface
     {
         $this->entity = $this->entity->orWhereDoesntHave($relation, $callback);
 
@@ -736,7 +736,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null): RepositoryInterface
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null): RepositoryInterface
     {
         $this->entity = $this->entity->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
 
@@ -770,7 +770,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null): RepositoryInterface
+    public function doesntHaveMorph($relation, $types, $boolean = 'and', ?Closure $callback = null): RepositoryInterface
     {
         $this->entity = $this->entity->doesntHaveMorph($relation, $types, $boolean, $callback);
 
@@ -803,7 +803,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
+    public function whereHasMorph($relation, $types, ?Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->entity = $this->entity->whereHasMorph($relation, $types, $callback, $operator, $count);
 
@@ -821,7 +821,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
+    public function orWhereHasMorph($relation, $types, ?Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface
     {
         $this->entity = $this->entity->orWhereHasMorph($relation, $types, $callback, $operator, $count);
 
@@ -837,7 +837,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function whereDoesntHaveMorph($relation, $types, Closure $callback = null): RepositoryInterface
+    public function whereDoesntHaveMorph($relation, $types, ?Closure $callback = null): RepositoryInterface
     {
         $this->entity = $this->entity->whereDoesntHaveMorph($relation, $types, $callback);
 
@@ -853,7 +853,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
      *
      * @return RepositoryInterface
      */
-    public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null): RepositoryInterface
+    public function orWhereDoesntHaveMorph($relation, $types, ?Closure $callback = null): RepositoryInterface
     {
         $this->entity = $this->entity->orWhereDoesntHaveMorph($relation, $types, $callback);
 
