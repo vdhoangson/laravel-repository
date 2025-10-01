@@ -357,10 +357,10 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null);
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null): RepositoryInterface;
 
     /**
-     * Or hase relation.
+     * Or has relation.
      *
      * @param string $relation
      * @param string $operator
@@ -379,7 +379,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function doesntHave($relation, $boolean = 'and', Closure $callback = null);
+    public function doesntHave($relation, $boolean = 'and', ?Closure $callback = null): RepositoryInterface;
 
     /**
      * Add a relationship count / exists condition to the query with an "or".
@@ -400,7 +400,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1);
+    public function whereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1): RepositoryInterface;
 
     /**
      * Or where has relation.
@@ -412,7 +412,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1);
+    public function orWhereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
      * Where doesnt have relation.
@@ -422,7 +422,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function whereDoesntHave($relation, Closure $callback = null);
+    public function whereDoesntHave($relation, ?Closure $callback = null);
 
     /**
      * Or where doesnt have relation.
@@ -432,7 +432,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function orWhereDoesntHave($relation, Closure $callback = null);
+    public function orWhereDoesntHave($relation, ?Closure $callback = null);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query.
@@ -446,7 +446,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null);
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with an "or".
@@ -470,7 +470,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null);
+    public function doesntHaveMorph($relation, $types, $boolean = 'and', ?Closure $callback = null);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with an "or".
@@ -493,7 +493,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1);
+    public function whereHasMorph($relation, $types, ?Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
@@ -506,7 +506,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1);
+    public function orWhereHasMorph($relation, $types, ?Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
@@ -517,7 +517,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function whereDoesntHaveMorph($relation, $types, Closure $callback = null);
+    public function whereDoesntHaveMorph($relation, $types, ?Closure $callback = null);
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
@@ -528,7 +528,7 @@ interface RepositoryInterface
      *
      * @return RepositoryInterface
      */
-    public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null);
+    public function orWhereDoesntHaveMorph($relation, $types, ?Closure $callback = null);
 
     /**
      * Count given relation.
