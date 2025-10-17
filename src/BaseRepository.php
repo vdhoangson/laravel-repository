@@ -110,6 +110,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetQuery();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -133,6 +134,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetQuery();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -150,13 +152,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
     public function first(array|string $columns = '*')
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
         $results = $this->entity->first($columns);
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -351,6 +353,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $result;
     }
@@ -376,6 +379,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -401,6 +405,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -426,6 +431,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -449,6 +455,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -468,13 +475,13 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
     public function chunk(int $limit, callable $callback, array|string $columns = '*'): bool
     {
         $this->applyCriteria();
-
         $this->applyScope();
 
         $results = $this->entity->select($columns)->chunk($limit, $callback);
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -498,6 +505,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $result;
     }
@@ -518,6 +526,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $result;
     }
@@ -542,6 +551,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }
@@ -568,6 +578,7 @@ abstract class BaseRepository extends AbtractRepository implements RepositoryInt
 
         $this->resetEntity();
         $this->resetScope();
+        $this->clearCriteria();
 
         return $results;
     }

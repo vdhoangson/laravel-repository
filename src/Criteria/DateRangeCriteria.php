@@ -70,7 +70,8 @@ class DateRangeCriteria extends BaseCriteria
             if ($this->dateTo === null) {
                 $entity = $entity->whereDate($this->column, '>=', $this->dateFrom);
             } else {
-                $entity = $entity->whereBetween($this->column, [$this->dateFrom, $this->dateTo]);
+                $entity = $entity->whereDate($this->column, '>=', $this->dateFrom)
+                    ->whereDate($this->column, '<=', $this->dateTo);
             }
         }
 
